@@ -48,7 +48,7 @@
 
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { translate } from '../i18n'
 import { useAuthStore } from '../stores/auth'
 import { useLocaleStore } from '../stores/locale'
@@ -56,6 +56,7 @@ import { useLocaleStore } from '../stores/locale'
 const auth = useAuthStore()
 const locale = useLocaleStore()
 const router = useRouter()
+const route = useRoute()
 const isRegistering = ref(false)
 const form = reactive({
   name: '',
@@ -74,6 +75,6 @@ async function submit() {
     ? await auth.register(form.name, form.email, form.password, form.password_confirmation, form.device_name)
     : await auth.login(form.email, form.password, form.device_name)
 
-  if (ok) await router.push('/dashboard')
+  if (ok) await router.push(String(route.query.redirect || '/dashboard'))
 }
 </script>

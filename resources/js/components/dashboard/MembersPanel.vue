@@ -44,7 +44,7 @@
         </div>
         <div class="history-metrics">
           <span>{{ invitation.accepted_at ? t('accepted') : t('pending') }}</span>
-          <span>{{ invitation.token }}</span>
+          <a class="button button-secondary" :href="invitationLink(invitation.token)">{{ t('invitation_link') }}</a>
         </div>
       </article>
     </div>
@@ -63,5 +63,9 @@ const locale = useLocaleStore()
 
 function t(key: string) {
   return translate(locale.locale, key)
+}
+
+function invitationLink(token: string) {
+  return `${window.location.origin}/invite/${token}`
 }
 </script>

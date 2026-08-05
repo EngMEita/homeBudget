@@ -8,6 +8,7 @@ import AccountDetailsView from './views/AccountDetailsView.vue'
 import AuthView from './views/AuthView.vue'
 import CategoriesView from './views/CategoriesView.vue'
 import DashboardView from './views/DashboardView.vue'
+import InviteAcceptView from './views/InviteAcceptView.vue'
 import NotificationsView from './views/NotificationsView.vue'
 import OfflineSyncView from './views/OfflineSyncView.vue'
 import ReceiptsView from './views/ReceiptsView.vue'
@@ -22,6 +23,7 @@ import { useLocaleStore } from './stores/locale'
 const routes = [
   { path: '/', redirect: () => (useAuthStore().token ? '/dashboard' : '/login') },
   { path: '/login', component: AuthView, meta: { public: true } },
+  { path: '/invite/:token', component: InviteAcceptView, meta: { public: true } },
   { path: '/dashboard', component: DashboardView },
   { path: '/accounts', component: AccountsView },
   { path: '/accounts/:id', component: AccountDetailsView },
@@ -46,7 +48,7 @@ setActivePinia(pinia)
 router.beforeEach((to) => {
   const auth = useAuthStore()
   if (!to.meta.public && !auth.token) return '/login'
-  if (to.path === '/login' && auth.token) return '/dashboard'
+  if (to.path === '/login' && auth.token) return String(to.query.redirect || '/dashboard')
 })
 
 const localeStore = useLocaleStore()

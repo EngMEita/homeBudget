@@ -6,6 +6,7 @@ Production-oriented multilingual household budgeting PWA built with Laravel, San
 
 - Email/password registration and token login using Sanctum.
 - First-run login/register screen with a demo owner login seeded for local setup.
+- Shareable household invitation links with a direct `/invite/{token}` acceptance screen.
 - Household workspaces with roles, invitations, and scoped API middleware.
 - Accounts, account types, currencies, categories, transactions, transfers, refunds, and ledger entries.
 - Integer minor-unit money storage and backend-only balance/report calculations.
@@ -94,7 +95,7 @@ Current verified result:
 
 ```text
 52 tests, 193 assertions
-npm run check:i18n passed with 164 synchronized locale keys
+npm run check:i18n passed with 169 synchronized locale keys
 npm run build passed and generated the PWA manifest/service worker
 npm run test:e2e passed on Chromium and mobile Chromium
 ```
