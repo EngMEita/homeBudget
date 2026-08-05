@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
@@ -44,6 +45,11 @@ class Account extends Model
     public function accountType(): BelongsTo
     {
         return $this->belongsTo(AccountType::class);
+    }
+
+    public function reconciliations(): HasMany
+    {
+        return $this->hasMany(AccountReconciliation::class);
     }
 
     public function scopeForHousehold(Builder $query, int $householdId): Builder

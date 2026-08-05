@@ -27,6 +27,9 @@ test('core shell supports dashboard navigation, Arabic RTL, and PWA metadata', a
   await page.getByRole('link', { name: /التقارير|Reports/ }).click()
   await expect(page).toHaveURL(/\/reports/)
 
+  await page.getByRole('link', { name: /الإشعارات|Notifications/ }).click()
+  await expect(page).toHaveURL(/\/notifications/)
+
   await page.getByRole('link', { name: /المزامنة دون اتصال|Offline sync/ }).click()
   await expect(page).toHaveURL(/\/offline-sync/)
 

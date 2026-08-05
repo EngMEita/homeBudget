@@ -44,7 +44,7 @@
     <div class="history-list" v-if="accounts.length">
       <article v-for="account in accounts" :key="account.id" class="history-row">
         <div>
-          <strong>{{ account.name }}</strong>
+          <RouterLink :to="`/accounts/${account.id}`"><strong>{{ account.name }}</strong></RouterLink>
           <div class="token-meta">{{ account.account_type_name }} · {{ account.currency_code }}</div>
         </div>
         <div class="history-metrics">
@@ -60,6 +60,7 @@
 
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
+import { RouterLink } from 'vue-router'
 import { translate } from '../i18n'
 import { useAccounts } from '../composables/useAccounts'
 import { useHouseholdStore } from '../stores/household'

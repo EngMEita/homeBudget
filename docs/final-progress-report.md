@@ -63,8 +63,8 @@ npm run test:e2e
 Latest automated verification:
 
 ```text
-49 tests, 181 assertions
-npm run check:i18n passed with 149 synchronized locale keys
+52 tests, 193 assertions
+npm run check:i18n passed with 156 synchronized locale keys
 npm run build passed with Workbox PWA output
 npm run test:e2e passed
 ```
@@ -91,8 +91,8 @@ These are explicitly allowed to be postponed or future-ready in `project.md`:
 ## Latest Verification
 
 ```text
-php artisan test: 49 tests, 181 assertions
-npm run check:i18n: 149 synchronized locale keys
+php artisan test: 52 tests, 193 assertions
+npm run check:i18n: 156 synchronized locale keys
 npm run build: passed with Workbox PWA output
 npm run test:e2e: 2 passed
 ```

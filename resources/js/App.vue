@@ -10,6 +10,7 @@
         <RouterLink to="/categories">{{ t('categories') }}</RouterLink>
         <RouterLink to="/receipts">{{ t('receipts') }}</RouterLink>
         <RouterLink to="/reports">{{ t('reports') }}</RouterLink>
+        <RouterLink to="/notifications">{{ t('notifications') }}</RouterLink>
         <RouterLink to="/offline-sync">{{ t('offline_sync') }}</RouterLink>
         <RouterLink to="/transactions">{{ t('transaction_history') }}</RouterLink>
         <RouterLink to="/settings">{{ t('settings') }}</RouterLink>

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AccountDeleteController;
+use App\Http\Controllers\Api\AccountReconciliationController;
 use App\Http\Controllers\Api\AccountUpdateController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\BackupController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Api\HouseholdMemberController;
 use App\Http\Controllers\Api\HouseholdController;
 use App\Http\Controllers\Api\HouseholdDashboardController;
 use App\Http\Controllers\Api\HouseholdReportController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ReceiptController;
 use App\Http\Controllers\Api\ReceiptAttachmentController;
 use App\Http\Controllers\Api\ReceiptCompleteController;
@@ -55,6 +57,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::prefix('households/{household}')->middleware(EnsureHouseholdMembership::class)->group(function () {
         Route::get('dashboard', [HouseholdDashboardController::class, 'show']);
         Route::get('reports', [HouseholdReportController::class, 'show']);
+        Route::get('notifications', [NotificationController::class, 'index']);
+        Route::post('notifications/{notificationId}/read', [NotificationController::class, 'markRead']);
         Route::get('audit-logs', AuditLogController::class);
         Route::get('backups', [BackupController::class, 'index']);
         Route::post('backups', [BackupController::class, 'store']);
@@ -77,6 +81,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('categories', [CategoryController::class, 'store']);
         Route::get('accounts', [AccountController::class, 'index']);
         Route::post('accounts', [AccountController::class, 'store']);
+        Route::get('accounts/{account}/reconciliations', [AccountReconciliationController::class, 'index']);
+        Route::post('account-reconciliations', [AccountReconciliationController::class, 'store']);
         Route::put('accounts/{account}', AccountUpdateController::class);
         Route::delete('accounts/{account}', AccountDeleteController::class);
         Route::post('transactions', [TransactionController::class, 'store']);
