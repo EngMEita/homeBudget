@@ -5,6 +5,8 @@ import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import AccountsView from './views/AccountsView.vue'
 import DashboardView from './views/DashboardView.vue'
+import OfflineSyncView from './views/OfflineSyncView.vue'
+import ReceiptsView from './views/ReceiptsView.vue'
 import ReportsView from './views/ReportsView.vue'
 import SecurityView from './views/SecurityView.vue'
 import TransactionHistoryView from './views/TransactionHistoryView.vue'
@@ -15,7 +17,9 @@ const routes = [
   { path: '/', redirect: '/dashboard' },
   { path: '/dashboard', component: DashboardView },
   { path: '/accounts', component: AccountsView },
+  { path: '/receipts', component: ReceiptsView },
   { path: '/reports', component: ReportsView },
+  { path: '/offline-sync', component: OfflineSyncView },
   { path: '/transactions', component: TransactionHistoryView },
   { path: '/security', component: SecurityView }
 ]

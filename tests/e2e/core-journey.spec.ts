@@ -18,8 +18,14 @@ test('core shell supports dashboard navigation, Arabic RTL, and PWA metadata', a
   await page.getByRole('link', { name: /الحسابات|Accounts/ }).click()
   await expect(page).toHaveURL(/\/accounts/)
 
+  await page.getByRole('link', { name: /الإيصالات|Receipts/ }).click()
+  await expect(page).toHaveURL(/\/receipts/)
+
   await page.getByRole('link', { name: /التقارير|Reports/ }).click()
   await expect(page).toHaveURL(/\/reports/)
+
+  await page.getByRole('link', { name: /المزامنة دون اتصال|Offline sync/ }).click()
+  await expect(page).toHaveURL(/\/offline-sync/)
 
   await page.getByRole('link', { name: /سجل المعاملات|Transaction history/ }).click()
   await expect(page).toHaveURL(/\/transactions/)
