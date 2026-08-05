@@ -1,6 +1,7 @@
 import { reactive, ref, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { buildOfflineAttachmentPayload, useOfflineQueueStore } from '../stores/offlineQueue'
+import { decimalToMinor } from '../money'
 import type { Household, Member, Receipt } from '../types/dashboard'
 
 export function useReceipts(activeHousehold: Ref<Household | null>, members: Ref<Member[]>) {
@@ -19,7 +20,7 @@ export function useReceipts(activeHousehold: Ref<Household | null>, members: Ref
 
   async function createReceipt() {
     if (!activeHousehold.value || !receiptForm.account_id || !receiptForm.currency_id || !receiptForm.total_minor_amount) return
-    const total = Number(receiptForm.total_minor_amount)
+    const total = decimalToMinor(receiptForm.total_minor_amount)
     const response = await fetch(`/api/households/${activeHousehold.value.id}/receipts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
@@ -48,7 +49,7 @@ export function useReceipts(activeHousehold: Ref<Household | null>, members: Ref
         total_minor_amount: activeReceipt.value.total_minor_amount,
         base_currency_minor_amount: activeReceipt.value.total_minor_amount,
         transaction_date: receiptForm.transaction_date,
-        allocations: [{ category_id: Number(receiptForm.category_id), amount_minor: Number(receiptForm.allocation_minor_amount) }]
+        allocations: [{ category_id: Number(receiptForm.category_id), amount_minor: decimalToMinor(receiptForm.allocation_minor_amount) }]
       })
     })
     if (!response.ok) return
@@ -75,7 +76,7 @@ export function useReceipts(activeHousehold: Ref<Household | null>, members: Ref
 
   async function enqueueOfflineReceipt() {
     if (!receiptForm.account_id || !receiptForm.currency_id || !receiptForm.total_minor_amount) return
-    const total = Number(receiptForm.total_minor_amount)
+    const total = decimalToMinor(receiptForm.total_minor_amount)
     const clientUuid = crypto.randomUUID()
     await offlineQueue.enqueue({
       client_uuid: clientUuid,

@@ -2,6 +2,7 @@ import { reactive, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
+import { decimalToMinor } from '../money'
 import type { Debt, Household, RecurringRule, SavingsGoal, UpcomingBill } from '../types/dashboard'
 
 export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?: () => Promise<void>) {
@@ -53,7 +54,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
         name: planningForm.name,
         type: 'expense',
         frequency: 'monthly',
-        amount_minor: Number(planningForm.amount_minor),
+        amount_minor: decimalToMinor(planningForm.amount_minor),
         starts_on: planningForm.date,
         next_run_on: planningForm.date
       })
@@ -71,7 +72,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
         account_id: planningForm.account_id ? Number(planningForm.account_id) : null,
         currency_id: Number(planningForm.currency_id),
         name: planningForm.name,
-        amount_minor: Number(planningForm.amount_minor),
+        amount_minor: decimalToMinor(planningForm.amount_minor),
         due_on: planningForm.date
       })
     })
@@ -87,7 +88,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
       body: JSON.stringify({
         currency_id: Number(planningForm.currency_id),
         name: planningForm.name,
-        target_minor_amount: Number(planningForm.amount_minor),
+        target_minor_amount: decimalToMinor(planningForm.amount_minor),
         target_date: planningForm.date
       })
     })
@@ -100,7 +101,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
     const response = await fetch(`/api/households/${activeHousehold.value.id}/savings-goals/${goalId}/contributions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
-      body: JSON.stringify({ amount_minor: Number(planningForm.amount_minor), contributed_on: planningForm.date })
+      body: JSON.stringify({ amount_minor: decimalToMinor(planningForm.amount_minor), contributed_on: planningForm.date })
     })
     if (!response.ok) return
     await refreshAfterWrite()
@@ -115,7 +116,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
         currency_id: Number(planningForm.currency_id),
         name: planningForm.name,
         counterparty_name: planningForm.counterparty_name || translate(locale.locale, 'counterparty_fallback'),
-        principal_minor_amount: Number(planningForm.amount_minor),
+        principal_minor_amount: decimalToMinor(planningForm.amount_minor),
         opened_on: planningForm.date
       })
     })
@@ -128,7 +129,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
     const response = await fetch(`/api/households/${activeHousehold.value.id}/debts/${debtId}/installments`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
-      body: JSON.stringify({ principal_minor_amount: Number(planningForm.amount_minor), interest_minor_amount: 0, paid_on: planningForm.date })
+      body: JSON.stringify({ principal_minor_amount: decimalToMinor(planningForm.amount_minor), interest_minor_amount: 0, paid_on: planningForm.date })
     })
     if (!response.ok) return
     await refreshAfterWrite()

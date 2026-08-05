@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/auth'
 import { useLocaleStore } from '../stores/locale'
 import { useOfflineQueueStore } from '../stores/offlineQueue'
 import { translate } from '../i18n'
+import { decimalToMinor } from '../money'
 import type { Household } from '../types/dashboard'
 
 export function useOfflineSync(activeHousehold: Ref<Household | null>) {
@@ -28,7 +29,7 @@ export function useOfflineSync(activeHousehold: Ref<Household | null>) {
         type: 'expense',
         status: 'confirmed',
         description: offlineForm.description || translate(locale.locale, 'expense_offline_default'),
-        amount_minor: Number(offlineForm.amount_minor),
+        amount_minor: decimalToMinor(offlineForm.amount_minor),
         transaction_date: offlineForm.transaction_date,
         version: 1
       }

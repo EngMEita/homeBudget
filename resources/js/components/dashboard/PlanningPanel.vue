@@ -5,7 +5,7 @@
       <label class="field"><span>{{ t('name') }}</span><input v-model="model.name" type="text" :placeholder="t('internet_bill_placeholder')" /></label>
       <label class="field"><span>{{ t('account_id') }}</span><input v-model="model.account_id" type="number" min="1" /></label>
       <label class="field"><span>{{ t('currency_id') }}</span><input v-model="model.currency_id" type="number" min="1" /></label>
-      <label class="field"><span>{{ t('amount') }}</span><input v-model="model.amount_minor" type="number" min="1" /></label>
+      <label class="field"><span>{{ t('amount') }}</span><input v-model="model.amount_minor" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
       <label class="field"><span>{{ t('date') }}</span><input v-model="model.date" type="date" /></label>
       <label class="field"><span>{{ t('counterparty') }}</span><input v-model="model.counterparty_name" type="text" :placeholder="t('relative_or_bank_placeholder')" /></label>
     </div>
@@ -26,14 +26,14 @@
       <article v-for="goal in savingsGoals" :key="`goal-${goal.id}`" class="history-row">
         <div>
           <strong>{{ goal.name }}</strong>
-          <div class="token-meta">{{ goal.current_minor_amount }}/{{ goal.target_minor_amount }} · {{ goal.status }}</div>
+          <div class="token-meta">{{ minorToDecimal(goal.current_minor_amount) }}/{{ minorToDecimal(goal.target_minor_amount) }} · {{ goal.status }}</div>
         </div>
         <button class="button button-secondary" type="button" @click="$emit('contribute-to-goal', goal.id)">{{ t('contribute') }}</button>
       </article>
       <article v-for="debt in debts" :key="`debt-${debt.id}`" class="history-row">
         <div>
           <strong>{{ debt.name }}</strong>
-          <div class="token-meta">{{ debt.counterparty_name }} · {{ t('remaining_amount', { amount: debt.remaining_minor_amount }) }}</div>
+          <div class="token-meta">{{ debt.counterparty_name }} · {{ t('remaining_amount', { amount: minorToDecimal(debt.remaining_minor_amount) }) }}</div>
         </div>
         <button class="button button-secondary" type="button" @click="$emit('pay-debt-installment', debt.id)">{{ t('pay_installment') }}</button>
       </article>
@@ -45,6 +45,7 @@
 import type { Debt, RecurringRule, SavingsGoal, UpcomingBill } from '../../types/dashboard'
 import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
+import { minorToDecimal } from '../../money'
 
 defineProps<{ recurringRules: RecurringRule[]; upcomingBills: UpcomingBill[]; savingsGoals: SavingsGoal[]; debts: Debt[] }>()
 defineEmits<{

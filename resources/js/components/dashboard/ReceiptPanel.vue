@@ -4,10 +4,10 @@
     <div class="filters-grid">
       <label class="field"><span>{{ t('account_id') }}</span><input v-model="model.account_id" type="number" min="1" /></label>
       <label class="field"><span>{{ t('currency_id') }}</span><input v-model="model.currency_id" type="number" min="1" /></label>
-      <label class="field"><span>{{ t('total') }}</span><input v-model="model.total_minor_amount" type="number" min="1" /></label>
+      <label class="field"><span>{{ t('total') }}</span><input v-model="model.total_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
       <label class="field"><span>{{ t('date') }}</span><input v-model="model.transaction_date" type="date" /></label>
       <label class="field"><span>{{ t('category_id') }}</span><input v-model="model.category_id" type="number" min="1" /></label>
-      <label class="field"><span>{{ t('allocation') }}</span><input v-model="model.allocation_minor_amount" type="number" min="1" /></label>
+      <label class="field"><span>{{ t('allocation') }}</span><input v-model="model.allocation_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
     </div>
     <div class="actions-row">
       <button class="button" type="button" @click="$emit('create-receipt')">{{ t('create_receipt') }}</button>
@@ -31,8 +31,8 @@
         <div class="token-meta">{{ activeReceipt.categorization_status }}</div>
       </div>
       <div class="history-metrics">
-        <span>{{ t('categorized_amount', { amount: activeReceipt.categorized_minor_amount }) }}</span>
-        <span>{{ t('remaining_amount', { amount: activeReceipt.remaining_uncategorized_minor_amount }) }}</span>
+        <span>{{ t('categorized_amount', { amount: minorToDecimal(activeReceipt.categorized_minor_amount) }) }}</span>
+        <span>{{ t('remaining_amount', { amount: minorToDecimal(activeReceipt.remaining_uncategorized_minor_amount) }) }}</span>
         <span>{{ t('attachments_count', { count: activeReceipt.attachments.length }) }}</span>
       </div>
     </article>
@@ -43,6 +43,7 @@
 import type { Receipt } from '../../types/dashboard'
 import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
+import { minorToDecimal } from '../../money'
 
 defineProps<{ activeReceipt: Receipt | null }>()
 defineEmits<{

@@ -4,7 +4,7 @@
     <div class="filters-grid">
       <label class="field"><span>{{ t('account_id') }}</span><input v-model="model.account_id" type="number" min="1" /></label>
       <label class="field"><span>{{ t('currency_id') }}</span><input v-model="model.currency_id" type="number" min="1" /></label>
-      <label class="field"><span>{{ t('amount') }}</span><input v-model="model.amount_minor" type="number" min="1" /></label>
+      <label class="field"><span>{{ t('amount') }}</span><input v-model="model.amount_minor" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
       <label class="field"><span>{{ t('description') }}</span><input v-model="model.description" type="text" /></label>
     </div>
     <div class="actions-row">

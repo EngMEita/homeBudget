@@ -85,10 +85,10 @@
           </div>
         </div>
         <div class="history-metrics">
-          <span>{{ t('minor_units', { amount: transaction.amount_minor }) }}</span>
-          <span v-if="transaction.transfer_fee_minor">{{ t('fee_minor', { amount: transaction.transfer_fee_minor }) }}</span>
+          <span>{{ minorToDecimal(transaction.amount_minor) }}</span>
+          <span v-if="transaction.transfer_fee_minor">{{ t('fee_minor', { amount: minorToDecimal(transaction.transfer_fee_minor) }) }}</span>
           <span v-if="transaction.exchange_rate">{{ t('rate_value', { value: transaction.exchange_rate }) }}</span>
-          <span v-if="transaction.base_amount_minor">{{ t('base_minor', { amount: transaction.base_amount_minor }) }}</span>
+          <span v-if="transaction.base_amount_minor">{{ t('base_minor', { amount: minorToDecimal(transaction.base_amount_minor) }) }}</span>
         </div>
       </article>
     </div>
@@ -118,6 +118,7 @@ import { useAuthStore } from '../stores/auth'
 import { useHouseholdStore } from '../stores/household'
 import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
+import { minorToDecimal } from '../money'
 
 type Household = {
   id: number

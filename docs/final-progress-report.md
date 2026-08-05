@@ -17,6 +17,7 @@
 
 - Implemented households, members, roles, policies, scoped middleware, currencies, accounts, account types, categories, transactions, transfers, refunds, ledger entries, and balance services.
 - Financial amounts use integer minor units.
+- User-facing financial forms accept decimal values like `1500.25` and convert them to integer minor units before API submission.
 - Transfer fees and exchange-rate persistence are covered by tests.
 
 ## Phase 4: Shopping Receipts

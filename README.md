@@ -10,6 +10,7 @@ Production-oriented multilingual household budgeting PWA built with Laravel, San
 - Household workspaces with roles, invitations, and scoped API middleware.
 - Accounts, account types, currencies, categories, transactions, transfers, refunds, and ledger entries.
 - Integer minor-unit money storage and backend-only balance/report calculations.
+- User-facing forms accept normal decimal amounts such as `1500.25`; the frontend converts them to integer minor units before API submission.
 - Multi-currency transaction metadata with persisted exchange-rate fields.
 - Receipts with attachments, partial/full categorization, allocation overrun validation, and offline attachment queue support.
 - Budgets, budget periods, budget lines, and basic forecast/report payloads.

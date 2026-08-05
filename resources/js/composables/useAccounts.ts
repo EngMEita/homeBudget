@@ -1,6 +1,7 @@
 import { computed, reactive, ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useHouseholdStore } from '../stores/household'
+import { decimalToMinor } from '../money'
 
 export type Account = {
   id: number
@@ -55,7 +56,7 @@ export function useAccounts() {
         account_type_id: Number(form.account_type_id),
         currency_id: Number(form.currency_id),
         name: form.name,
-        opening_balance_minor: Number(form.opening_balance_minor),
+        opening_balance_minor: decimalToMinor(form.opening_balance_minor),
         is_shared: form.is_shared,
         is_active: form.is_active
       })

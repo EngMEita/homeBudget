@@ -6,7 +6,7 @@
       <label class="field"><span>{{ t('start') }}</span><input v-model="model.starts_on" type="date" /></label>
       <label class="field"><span>{{ t('end') }}</span><input v-model="model.ends_on" type="date" /></label>
       <label class="field"><span>{{ t('category') }}</span><input v-model="model.category_id" type="number" min="1" /></label>
-      <label class="field"><span>{{ t('planned_amount') }}</span><input v-model="model.planned_minor_amount" type="number" min="1" /></label>
+      <label class="field"><span>{{ t('planned_amount') }}</span><input v-model="model.planned_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
     </div>
     <div class="actions-row">
       <button class="button" type="button" @click="$emit('create-budget')">{{ t('create_budget') }}</button>
@@ -26,7 +26,7 @@
         </div>
         <div class="history-metrics">
           <span v-for="line in period.lines" :key="line.category_id">
-            {{ line.category_name }}: {{ line.actual_minor_amount }}/{{ line.planned_minor_amount }}
+            {{ line.category_name }}: {{ minorToDecimal(line.actual_minor_amount) }}/{{ minorToDecimal(line.planned_minor_amount) }}
           </span>
         </div>
       </article>
@@ -38,6 +38,7 @@
 import type { BudgetSummary } from '../../types/dashboard'
 import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
+import { minorToDecimal } from '../../money'
 
 defineProps<{ summary: BudgetSummary }>()
 defineEmits<{ 'create-budget': []; 'refresh-budget': [] }>()

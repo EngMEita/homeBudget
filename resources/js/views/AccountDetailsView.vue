@@ -11,14 +11,14 @@
     <div class="stats-grid" v-if="account">
       <div class="stat-card"><span class="stat-label">{{ t('account_type') }}</span><strong>{{ account.account_type_name }}</strong></div>
       <div class="stat-card"><span class="stat-label">{{ t('currency') }}</span><strong>{{ account.currency_code }}</strong></div>
-      <div class="stat-card"><span class="stat-label">{{ t('opening_balance') }}</span><strong>{{ account.opening_balance_minor }}</strong></div>
+      <div class="stat-card"><span class="stat-label">{{ t('opening_balance') }}</span><strong>{{ minorToDecimal(account.opening_balance_minor) }}</strong></div>
     </div>
   </section>
 
   <section class="panel" v-if="account">
     <h2>{{ t('reconcile_account') }}</h2>
     <div class="filters-grid">
-      <label class="field"><span>{{ t('statement_balance') }}</span><input v-model="form.statement_balance_minor" type="number" /></label>
+      <label class="field"><span>{{ t('statement_balance') }}</span><input v-model="form.statement_balance_minor" type="number" step="0.01" placeholder="1500.25" /></label>
       <label class="field"><span>{{ t('date') }}</span><input v-model="form.reconciled_on" type="date" /></label>
       <label class="field"><span>{{ t('description') }}</span><input v-model="form.notes" type="text" /></label>
     </div>
@@ -34,8 +34,8 @@
           <div class="token-meta">{{ reconciliation.notes }}</div>
         </div>
         <div class="history-metrics">
-          <span>{{ t('statement_balance') }}: {{ reconciliation.statement_balance_minor }}</span>
-          <span>{{ t('amount') }}: {{ reconciliation.difference_minor }}</span>
+          <span>{{ t('statement_balance') }}: {{ minorToDecimal(reconciliation.statement_balance_minor) }}</span>
+          <span>{{ t('amount') }}: {{ minorToDecimal(reconciliation.difference_minor) }}</span>
         </div>
       </article>
     </div>
@@ -49,6 +49,7 @@ import { useRoute } from 'vue-router'
 import type { Account } from '../composables/useAccounts'
 import { useAccounts } from '../composables/useAccounts'
 import { translate } from '../i18n'
+import { decimalToMinor, minorToDecimal } from '../money'
 import { useAuthStore } from '../stores/auth'
 import { useHouseholdStore } from '../stores/household'
 import { useLocaleStore } from '../stores/locale'
@@ -100,7 +101,7 @@ async function reconcile() {
     headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
     body: JSON.stringify({
       account_id: account.value.id,
-      statement_balance_minor: Number(form.statement_balance_minor),
+      statement_balance_minor: decimalToMinor(form.statement_balance_minor),
       reconciled_on: form.reconciled_on,
       notes: form.notes
     })

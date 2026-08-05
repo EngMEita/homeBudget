@@ -2,6 +2,7 @@ import { reactive, ref, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
+import { decimalToMinor } from '../money'
 import type { BudgetSummary, Household } from '../types/dashboard'
 
 export function useBudgets(activeHousehold: Ref<Household | null>) {
@@ -32,7 +33,7 @@ export function useBudgets(activeHousehold: Ref<Household | null>) {
         name: budgetForm.name,
         starts_on: budgetForm.starts_on,
         ends_on: budgetForm.ends_on,
-        lines: [{ category_id: Number(budgetForm.category_id), planned_minor_amount: Number(budgetForm.planned_minor_amount) }]
+        lines: [{ category_id: Number(budgetForm.category_id), planned_minor_amount: decimalToMinor(budgetForm.planned_minor_amount) }]
       })
     })
     if (!response.ok) return

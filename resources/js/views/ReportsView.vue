@@ -27,7 +27,7 @@
           <div class="token-meta">{{ transaction.transaction_date }} · {{ transaction.type }} · {{ transaction.status }}</div>
         </div>
         <div class="history-metrics">
-          <span>{{ transaction.amount_minor }}</span>
+          <span>{{ minorToDecimal(transaction.amount_minor) }}</span>
           <span>{{ report.base_currency_code }}</span>
         </div>
       </article>
@@ -39,6 +39,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import { translate } from '../i18n'
+import { minorToDecimal } from '../money'
 import { useAuthStore } from '../stores/auth'
 import { useHouseholdStore } from '../stores/household'
 import { useLocaleStore } from '../stores/locale'

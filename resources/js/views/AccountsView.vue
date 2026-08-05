@@ -29,7 +29,7 @@
       </label>
       <label class="field">
         <span>{{ t('opening_balance') }}</span>
-        <input v-model="form.opening_balance_minor" type="number" />
+        <input v-model="form.opening_balance_minor" type="number" step="0.01" placeholder="1500.25" />
       </label>
     </div>
 
@@ -48,7 +48,7 @@
           <div class="token-meta">{{ account.account_type_name }} · {{ account.currency_code }}</div>
         </div>
         <div class="history-metrics">
-          <span>{{ t('opening_balance') }}: {{ account.opening_balance_minor }}</span>
+          <span>{{ t('opening_balance') }}: {{ minorToDecimal(account.opening_balance_minor) }}</span>
           <span v-if="account.is_shared">{{ t('shared') }}</span>
           <span v-if="account.is_active">{{ t('active') }}</span>
         </div>
@@ -61,8 +61,9 @@
 <script setup lang="ts">
 import { onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
-import { translate } from '../i18n'
 import { useAccounts } from '../composables/useAccounts'
+import { translate } from '../i18n'
+import { minorToDecimal } from '../money'
 import { useHouseholdStore } from '../stores/household'
 import { useLocaleStore } from '../stores/locale'
 
