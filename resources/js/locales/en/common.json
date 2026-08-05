@@ -1,5 +1,8 @@
 {
   "language": "Language",
+  "app_title": "Household budgeting foundation",
+  "app_subtitle": "Multilingual household finance with secure households, transactions, and reporting.",
+  "dashboard": "Dashboard",
   "english": "English",
   "arabic": "Arabic",
   "active_household": "Active household",
@@ -13,7 +16,7 @@
   "type": "Type",
   "currency": "Currency",
   "results": "Results",
-  "security_sessions": "Security & Sessions",
+  "security_sessions": "Security and sessions",
   "current_device_label": "Current device label",
   "rotate_current_token": "Rotate current token",
   "revoke_current_device": "Revoke current device",

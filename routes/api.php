@@ -28,10 +28,19 @@ use App\Http\Controllers\Api\UpcomingBillController;
 use App\Http\Middleware\EnsureHouseholdMembership;
 use Illuminate\Support\Facades\Route;
 
-Route::post('auth/register', [AuthController::class, 'register']);
-Route::post('auth/login', [AuthController::class, 'login']);
+Route::middleware('throttle:auth')->group(function () {
+    Route::post('auth/register', [AuthController::class, 'register']);
+    Route::post('auth/login', [AuthController::class, 'login']);
+    Route::post('auth/forgot-password', [AuthController::class, 'forgotPassword']);
+    Route::post('auth/reset-password', [AuthController::class, 'resetPassword']);
+});
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::post('auth/confirm-password', [AuthController::class, 'confirmPassword'])->middleware('throttle:auth');
+    Route::post('auth/email/verification-notification', [AuthController::class, 'sendEmailVerification'])->middleware('throttle:auth');
+    Route::get('auth/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+        ->middleware(['signed', 'throttle:auth'])
+        ->name('verification.verify');
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('auth/me', [AuthController::class, 'me']);
     Route::get('auth/sessions', [AuthController::class, 'sessions']);
@@ -48,6 +57,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('audit-logs', AuditLogController::class);
         Route::get('backups', [BackupController::class, 'index']);
         Route::post('backups', [BackupController::class, 'store']);
+        Route::post('backups/restore', [BackupController::class, 'restore']);
         Route::get('budgets', [BudgetController::class, 'show']);
         Route::post('budgets', [BudgetController::class, 'store']);
         Route::get('recurring-rules', [RecurringRuleController::class, 'index']);

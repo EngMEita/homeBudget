@@ -1,5 +1,8 @@
 {
   "language": "اللغة",
+  "app_title": "منصة ميزانية الأسرة",
+  "app_subtitle": "إدارة مالية متعددة اللغات للأسر مع مساحات عمل آمنة ومعاملات وتقارير.",
+  "dashboard": "لوحة التحكم",
   "english": "الإنجليزية",
   "arabic": "العربية",
   "active_household": "المساحة النشطة",
@@ -15,7 +18,7 @@
   "results": "النتائج",
   "security_sessions": "الأمان والجلسات",
   "current_device_label": "اسم الجهاز الحالي",
-  "rotate_current_token": "تدوير التوكن الحالي",
+  "rotate_current_token": "تدوير الرمز الحالي",
   "revoke_current_device": "إلغاء الجهاز الحالي",
   "no_transactions": "لا توجد معاملات تطابق الفلاتر الحالية."
 }

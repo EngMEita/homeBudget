@@ -31,6 +31,15 @@ class TransactionIndexController extends Controller
             ->latest('id')
             ->get();
 
+        $format = $request->string('format')->toString() ?: 'csv';
+        if ($format === 'xls') {
+            return $this->exportExcel($transactions, $household->getKey());
+        }
+
+        if ($format === 'pdf') {
+            return $this->exportPdf($transactions, $household->getKey());
+        }
+
         $filename = sprintf('household-%d-transactions.csv', $household->getKey());
 
         return response()->streamDownload(function () use ($transactions): void {
@@ -65,6 +74,51 @@ class TransactionIndexController extends Controller
 
             fclose($output);
         }, $filename, ['Content-Type' => 'text/csv']);
+    }
+
+    private function exportExcel($transactions, int $householdId): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($transactions): void {
+            echo "<html><meta charset=\"utf-8\"><body><table border=\"1\">";
+            echo '<tr><th>ID</th><th>Date</th><th>Type</th><th>Description</th><th>Amount</th><th>Base amount</th><th>Fee</th></tr>';
+            foreach ($transactions as $transaction) {
+                echo '<tr>';
+                echo '<td>'.e($transaction->id).'</td>';
+                echo '<td>'.e($transaction->transaction_date?->toDateString()).'</td>';
+                echo '<td>'.e($transaction->type).'</td>';
+                echo '<td>'.e($transaction->description).'</td>';
+                echo '<td>'.e($transaction->amount_minor).'</td>';
+                echo '<td>'.e($transaction->base_amount_minor).'</td>';
+                echo '<td>'.e($transaction->transfer_fee_minor).'</td>';
+                echo '</tr>';
+            }
+            echo '</table></body></html>';
+        }, sprintf('household-%d-transactions.xls', $householdId), ['Content-Type' => 'application/vnd.ms-excel; charset=UTF-8']);
+    }
+
+    private function exportPdf($transactions, int $householdId): StreamedResponse
+    {
+        return response()->streamDownload(function () use ($transactions): void {
+            $lines = ["HomeBudget Transactions", str_repeat('-', 24)];
+            foreach ($transactions as $transaction) {
+                $lines[] = sprintf(
+                    '#%d %s %s %s %d',
+                    $transaction->id,
+                    $transaction->transaction_date?->toDateString(),
+                    $transaction->type,
+                    $transaction->description,
+                    $transaction->amount_minor
+                );
+            }
+            $content = implode("\\n", array_map(fn ($line) => str_replace(['\\', '(', ')'], ['\\\\', '\(', '\)'], $line), $lines));
+            $stream = "BT /F1 10 Tf 40 780 Td ({$content}) Tj ET";
+            $pdf = "%PDF-1.4\n1 0 obj << /Type /Catalog /Pages 2 0 R >> endobj\n"
+                ."2 0 obj << /Type /Pages /Kids [3 0 R] /Count 1 >> endobj\n"
+                ."3 0 obj << /Type /Page /Parent 2 0 R /Resources << /Font << /F1 4 0 R >> >> /MediaBox [0 0 595 842] /Contents 5 0 R >> endobj\n"
+                ."4 0 obj << /Type /Font /Subtype /Type1 /BaseFont /Helvetica >> endobj\n"
+                ."5 0 obj << /Length ".strlen($stream)." >> stream\n{$stream}\nendstream endobj\ntrailer << /Root 1 0 R >>\n%%EOF";
+            echo $pdf;
+        }, sprintf('household-%d-transactions.pdf', $householdId), ['Content-Type' => 'application/pdf']);
     }
 
     private function filteredQuery(Request $request, Household $household)

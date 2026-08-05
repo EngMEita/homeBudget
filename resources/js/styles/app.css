@@ -54,6 +54,27 @@ h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.05; }
   color: #0f172a;
 }
 
+.app-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.app-nav a {
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(15, 23, 42, 0.08);
+  color: #0f172a;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.app-nav a.router-link-active {
+  background: #0f172a;
+  color: #fff;
+}
+
 .field {
   display: grid;
   gap: 8px;
