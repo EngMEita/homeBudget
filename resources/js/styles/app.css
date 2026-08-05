@@ -88,11 +88,21 @@ h1 { margin: 0; font-size: clamp(2.2rem, 5vw, 4.2rem); line-height: 1.05; }
   color: #475569;
 }
 
-.field input {
+.field input,
+.field select {
   border: 1px solid rgba(148, 163, 184, 0.5);
   border-radius: 14px;
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.92);
+}
+
+.check-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 16px;
+  color: #334155;
+  font-weight: 600;
 }
 
 .token-list,

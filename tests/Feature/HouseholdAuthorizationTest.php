@@ -65,6 +65,29 @@ class HouseholdAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_account_index_is_household_scoped(): void
+    {
+        [$user, $household, $currency, $accountType] = $this->seedHouseholdUser(HouseholdRole::Owner);
+        $visibleAccount = Account::factory()->create([
+            'household_id' => $household->id,
+            'currency_id' => $currency->id,
+            'account_type_id' => $accountType->id,
+            'name' => 'Visible Wallet',
+        ]);
+        Account::factory()->create([
+            'currency_id' => $currency->id,
+            'account_type_id' => $accountType->id,
+            'name' => 'Hidden Wallet',
+        ]);
+
+        $this->actingAs($user)
+            ->getJson("/api/households/{$household->id}/accounts")
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $visibleAccount->id)
+            ->assertJsonMissing(['name' => 'Hidden Wallet'])
+            ->assertJsonStructure(['account_types', 'currencies']);
+    }
+
     public function test_cross_household_access_is_blocked(): void
     {
         [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Owner);

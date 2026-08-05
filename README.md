@@ -12,7 +12,7 @@ Production-oriented multilingual household budgeting PWA built with Laravel, San
 - Receipts with attachments, partial/full categorization, allocation overrun validation, and offline attachment queue support.
 - Budgets, budget periods, budget lines, and basic forecast/report payloads.
 - Recurring rules, upcoming bills, savings goals, debts, installments, audit logs, backups, and dashboard counts.
-- IndexedDB offline queue, service worker background sync hook, optimistic conflict detection, retry/backoff, image compression, and chunked attachment payloads.
+- IndexedDB offline queue, Workbox-powered PWA service worker, background sync hook, optimistic conflict detection, retry/backoff, image compression, and chunked attachment payloads.
 - CSV transaction export and SQLite backup/health-check API.
 - English/Arabic locale foundation and RTL-aware application shell.
 
@@ -83,13 +83,18 @@ Cron scheduler:
 
 ```bash
 php artisan test
+npm run check:i18n
 npm run build
+npm run test:e2e
 ```
 
 Current verified result:
 
 ```text
-44 tests, 162 assertions
+47 tests, 173 assertions
+npm run check:i18n passed with 143 synchronized locale keys
+npm run build passed and generated the PWA manifest/service worker
+npm run test:e2e passed on Chromium and mobile Chromium
 ```
 
 ## Production Notes

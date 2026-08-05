@@ -41,6 +41,11 @@ class Account extends Model
         return $this->belongsTo(Currency::class);
     }
 
+    public function accountType(): BelongsTo
+    {
+        return $this->belongsTo(AccountType::class);
+    }
+
     public function scopeForHousehold(Builder $query, int $householdId): Builder
     {
         return $query->where('household_id', $householdId);

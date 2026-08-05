@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">HomeBudget</title>
+  <rect width="512" height="512" rx="112" fill="#17453b"/>
+  <path d="M104 238 256 116l152 122v150a24 24 0 0 1-24 24H128a24 24 0 0 1-24-24V238Z" fill="#f6efe2"/>
+  <path d="M174 390V256h164v134" fill="#d59f3a"/>
+  <path d="M205 302h102M205 342h76" stroke="#17453b" stroke-width="28" stroke-linecap="round"/>
+</svg>

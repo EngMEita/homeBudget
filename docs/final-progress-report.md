@@ -55,14 +55,18 @@ php artisan migrate
 php artisan db:seed
 php artisan route:list --path=api/households
 php artisan test
+npm run check:i18n
 npm run build
+npm run test:e2e
 ```
 
 Latest automated verification:
 
 ```text
-44 tests, 162 assertions
-npm run build passed
+47 tests, 173 assertions
+npm run check:i18n passed with 143 synchronized locale keys
+npm run build passed with Workbox PWA output
+npm run test:e2e passed
 ```
 
 ## Deferred By Master Scope
@@ -79,7 +83,16 @@ These are explicitly allowed to be postponed or future-ready in `project.md`:
 
 ## Remaining Production Hardening
 
-- Browser E2E tests should be added with Playwright or Cypress before real release.
-- A full translation audit is still needed because the current shell still contains hardcoded English strings from earlier rapid UI build-out.
-- Backup restore should remain an operational protected workflow until a dedicated restore UI and password-confirmation flow are implemented.
+- Browser E2E now covers shell navigation, Arabic RTL switching, accounts/reports routes, and PWA manifest metadata; deeper authenticated financial journeys still need expansion before real release.
+- Frontend translation keys are synchronized by `npm run check:i18n`; backend validation/email/report translations still need a deeper release audit.
+- Backup restore now validates the selected SQLite backup before replacement, uses an exclusive restore lock, and attempts rollback to a pre-restore backup if health checks fail; a dedicated restore UI and operational maintenance workflow are still required before real release.
 - Push notifications need real browser permission UX and a delivery provider before production use.
+
+## Latest Verification
+
+```text
+php artisan test: 47 tests, 173 assertions
+npm run check:i18n: 143 synchronized locale keys
+npm run build: passed with Workbox PWA output
+npm run test:e2e: 2 passed
+```

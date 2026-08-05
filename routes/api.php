@@ -72,6 +72,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('debts/{debt}/installments', [DebtController::class, 'installment']);
         Route::get('members', [HouseholdMemberController::class, 'index']);
         Route::post('members/invitations', [HouseholdMemberController::class, 'invite']);
+        Route::get('accounts', [AccountController::class, 'index']);
         Route::post('accounts', [AccountController::class, 'store']);
         Route::put('accounts/{account}', AccountUpdateController::class);
         Route::delete('accounts/{account}', AccountDeleteController::class);
