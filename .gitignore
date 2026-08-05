@@ -1,0 +1,10 @@
+/vendor
+/node_modules
+/public/build
+/storage/*.sqlite
+/database/*.sqlite
+/database/database.sqlite
+/.env
+/.env.*
+!/!.env.example
+/coverage

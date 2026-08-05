@@ -1,0 +1,21 @@
+{
+  "language": "Language",
+  "english": "English",
+  "arabic": "Arabic",
+  "active_household": "Active household",
+  "transaction_history": "Transaction history",
+  "refresh": "Refresh",
+  "download_csv": "Download CSV",
+  "apply_filters": "Apply filters",
+  "reset": "Reset",
+  "from": "From",
+  "to": "To",
+  "type": "Type",
+  "currency": "Currency",
+  "results": "Results",
+  "security_sessions": "Security & Sessions",
+  "current_device_label": "Current device label",
+  "rotate_current_token": "Rotate current token",
+  "revoke_current_device": "Revoke current device",
+  "no_transactions": "No transactions match the current filters."
+}

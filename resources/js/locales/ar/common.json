@@ -1,0 +1,21 @@
+{
+  "language": "اللغة",
+  "english": "الإنجليزية",
+  "arabic": "العربية",
+  "active_household": "المساحة النشطة",
+  "transaction_history": "سجل المعاملات",
+  "refresh": "تحديث",
+  "download_csv": "تنزيل CSV",
+  "apply_filters": "تطبيق الفلاتر",
+  "reset": "إعادة ضبط",
+  "from": "من",
+  "to": "إلى",
+  "type": "النوع",
+  "currency": "العملة",
+  "results": "النتائج",
+  "security_sessions": "الأمان والجلسات",
+  "current_device_label": "اسم الجهاز الحالي",
+  "rotate_current_token": "تدوير التوكن الحالي",
+  "revoke_current_device": "إلغاء الجهاز الحالي",
+  "no_transactions": "لا توجد معاملات تطابق الفلاتر الحالية."
+}
