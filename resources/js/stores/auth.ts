@@ -6,6 +6,40 @@ export const useAuthStore = defineStore('auth', {
     tokenLabel: localStorage.getItem('homebudget_token_label') ?? 'Current device'
   }),
   actions: {
+    async login(email: string, password: string, deviceName = this.tokenLabel) {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password, device_name: deviceName })
+      })
+      if (!response.ok) return false
+      const payload = await response.json()
+      this.setToken(payload.token, deviceName)
+      return true
+    },
+    async register(name: string, email: string, password: string, passwordConfirmation: string, deviceName = this.tokenLabel) {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name,
+          email,
+          password,
+          password_confirmation: passwordConfirmation,
+          device_name: deviceName
+        })
+      })
+      if (!response.ok) return false
+      const payload = await response.json()
+      this.setToken(payload.token, deviceName)
+      return true
+    },
+    async logout() {
+      if (this.token) {
+        await fetch('/api/auth/logout', { method: 'POST', headers: this.authHeaders() })
+      }
+      this.clearToken()
+    },
     setToken(token: string, label = this.tokenLabel) {
       this.token = token
       this.tokenLabel = label

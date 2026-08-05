@@ -1,7 +1,12 @@
 import { expect, test } from '@playwright/test'
 
-test('core shell supports dashboard navigation, Arabic RTL, and PWA metadata', async ({ page }) => {
+test('core shell supports login, dashboard navigation, Arabic RTL, and PWA metadata', async ({ page }) => {
   await page.goto('/dashboard')
+  await expect(page).toHaveURL(/\/login/)
+  await expect(page.getByRole('heading', { name: /Log in|تسجيل الدخول/ })).toBeVisible()
+
+  await page.getByRole('button', { name: /Log in|تسجيل الدخول/ }).click()
+  await expect(page).toHaveURL(/\/dashboard/)
   await expect(page.getByRole('heading', { name: /Household budgeting foundation|منصة ميزانية الأسرة/ })).toBeVisible()
 
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/build/manifest.webmanifest')

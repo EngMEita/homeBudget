@@ -5,6 +5,7 @@ import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import AccountsView from './views/AccountsView.vue'
 import AccountDetailsView from './views/AccountDetailsView.vue'
+import AuthView from './views/AuthView.vue'
 import CategoriesView from './views/CategoriesView.vue'
 import DashboardView from './views/DashboardView.vue'
 import NotificationsView from './views/NotificationsView.vue'
@@ -15,10 +16,12 @@ import SecurityView from './views/SecurityView.vue'
 import SettingsView from './views/SettingsView.vue'
 import TransactionHistoryView from './views/TransactionHistoryView.vue'
 import './styles/app.css'
+import { useAuthStore } from './stores/auth'
 import { useLocaleStore } from './stores/locale'
 
 const routes = [
-  { path: '/', redirect: '/dashboard' },
+  { path: '/', redirect: () => (useAuthStore().token ? '/dashboard' : '/login') },
+  { path: '/login', component: AuthView, meta: { public: true } },
   { path: '/dashboard', component: DashboardView },
   { path: '/accounts', component: AccountsView },
   { path: '/accounts/:id', component: AccountDetailsView },
@@ -39,6 +42,12 @@ const router = createRouter({
 
 const pinia = createPinia()
 setActivePinia(pinia)
+
+router.beforeEach((to) => {
+  const auth = useAuthStore()
+  if (!to.meta.public && !auth.token) return '/login'
+  if (to.path === '/login' && auth.token) return '/dashboard'
+})
 
 const localeStore = useLocaleStore()
 localeStore.setLocale(localeStore.locale)
