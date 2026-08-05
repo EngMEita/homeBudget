@@ -18,6 +18,9 @@ test('core shell supports dashboard navigation, Arabic RTL, and PWA metadata', a
   await page.getByRole('link', { name: /الحسابات|Accounts/ }).click()
   await expect(page).toHaveURL(/\/accounts/)
 
+  await page.getByRole('link', { name: /الفئات|Categories/ }).click()
+  await expect(page).toHaveURL(/\/categories/)
+
   await page.getByRole('link', { name: /الإيصالات|Receipts/ }).click()
   await expect(page).toHaveURL(/\/receipts/)
 
@@ -30,6 +33,9 @@ test('core shell supports dashboard navigation, Arabic RTL, and PWA metadata', a
   await page.getByRole('link', { name: /سجل المعاملات|Transaction history/ }).click()
   await expect(page).toHaveURL(/\/transactions/)
 
-  await page.getByRole('link', { name: /الأمان والجلسات|Security and sessions/ }).click()
+  await page.getByRole('link', { name: /الإعدادات|Settings/ }).click()
+  await expect(page).toHaveURL(/\/settings/)
+
+  await page.getByRole('navigation').getByRole('link', { name: /الأمان والجلسات|Security and sessions/ }).click()
   await expect(page).toHaveURL(/\/security/)
 })

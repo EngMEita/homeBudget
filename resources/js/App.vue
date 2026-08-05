@@ -7,10 +7,12 @@
       <nav class="app-nav" :aria-label="t('primary_navigation')">
         <RouterLink to="/dashboard">{{ t('dashboard') }}</RouterLink>
         <RouterLink to="/accounts">{{ t('accounts') }}</RouterLink>
+        <RouterLink to="/categories">{{ t('categories') }}</RouterLink>
         <RouterLink to="/receipts">{{ t('receipts') }}</RouterLink>
         <RouterLink to="/reports">{{ t('reports') }}</RouterLink>
         <RouterLink to="/offline-sync">{{ t('offline_sync') }}</RouterLink>
         <RouterLink to="/transactions">{{ t('transaction_history') }}</RouterLink>
+        <RouterLink to="/settings">{{ t('settings') }}</RouterLink>
         <RouterLink to="/security">{{ t('security_sessions') }}</RouterLink>
       </nav>
     </section>

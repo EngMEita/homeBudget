@@ -14,7 +14,7 @@ Production-oriented multilingual household budgeting PWA built with Laravel, San
 - Recurring rules, upcoming bills, savings goals, debts, installments, audit logs, backups, and dashboard counts.
 - IndexedDB offline queue, Workbox-powered PWA service worker, background sync hook, optimistic conflict detection, retry/backoff, image compression, and chunked attachment payloads.
 - CSV transaction export and SQLite backup/health-check API.
-- Standalone dashboard, accounts, receipts, reports, offline sync, transaction history, and security screens.
+- Standalone dashboard, accounts, categories, receipts, reports, offline sync, transaction history, settings, and security screens.
 - English/Arabic locale foundation and RTL-aware application shell.
 
 ## Requirements
@@ -92,8 +92,8 @@ npm run test:e2e
 Current verified result:
 
 ```text
-48 tests, 177 assertions
-npm run check:i18n passed with 143 synchronized locale keys
+49 tests, 181 assertions
+npm run check:i18n passed with 149 synchronized locale keys
 npm run build passed and generated the PWA manifest/service worker
 npm run test:e2e passed on Chromium and mobile Chromium
 ```

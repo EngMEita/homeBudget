@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\AccountUpdateController;
 use App\Http\Controllers\Api\AuditLogController;
 use App\Http\Controllers\Api\BackupController;
 use App\Http\Controllers\Api\BudgetController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\DebtController;
 use App\Http\Controllers\Api\HouseholdMemberController;
 use App\Http\Controllers\Api\HouseholdController;
@@ -72,6 +73,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('debts/{debt}/installments', [DebtController::class, 'installment']);
         Route::get('members', [HouseholdMemberController::class, 'index']);
         Route::post('members/invitations', [HouseholdMemberController::class, 'invite']);
+        Route::get('categories', [CategoryController::class, 'index']);
+        Route::post('categories', [CategoryController::class, 'store']);
         Route::get('accounts', [AccountController::class, 'index']);
         Route::post('accounts', [AccountController::class, 'store']);
         Route::put('accounts/{account}', AccountUpdateController::class);

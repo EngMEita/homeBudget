@@ -4,11 +4,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 import { registerSW } from 'virtual:pwa-register'
 import App from './App.vue'
 import AccountsView from './views/AccountsView.vue'
+import CategoriesView from './views/CategoriesView.vue'
 import DashboardView from './views/DashboardView.vue'
 import OfflineSyncView from './views/OfflineSyncView.vue'
 import ReceiptsView from './views/ReceiptsView.vue'
 import ReportsView from './views/ReportsView.vue'
 import SecurityView from './views/SecurityView.vue'
+import SettingsView from './views/SettingsView.vue'
 import TransactionHistoryView from './views/TransactionHistoryView.vue'
 import './styles/app.css'
 import { useLocaleStore } from './stores/locale'
@@ -17,10 +19,12 @@ const routes = [
   { path: '/', redirect: '/dashboard' },
   { path: '/dashboard', component: DashboardView },
   { path: '/accounts', component: AccountsView },
+  { path: '/categories', component: CategoriesView },
   { path: '/receipts', component: ReceiptsView },
   { path: '/reports', component: ReportsView },
   { path: '/offline-sync', component: OfflineSyncView },
   { path: '/transactions', component: TransactionHistoryView },
+  { path: '/settings', component: SettingsView },
   { path: '/security', component: SecurityView }
 ]
 

@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Enums\HouseholdRole;
 use App\Models\Account;
 use App\Models\AccountType;
+use App\Models\Category;
 use App\Models\Currency;
 use App\Models\Household;
 use App\Models\HouseholdUser;
@@ -86,6 +87,29 @@ class HouseholdAuthorizationTest extends TestCase
             ->assertJsonPath('data.0.id', $visibleAccount->id)
             ->assertJsonMissing(['name' => 'Hidden Wallet'])
             ->assertJsonStructure(['account_types', 'currencies']);
+    }
+
+    public function test_category_index_is_household_scoped_and_viewer_cannot_create(): void
+    {
+        [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Viewer);
+        $visibleCategory = Category::factory()->create([
+            'household_id' => $household->id,
+            'name' => 'Groceries',
+        ]);
+        Category::factory()->create(['name' => 'Other Household Category']);
+
+        $this->actingAs($user)
+            ->getJson("/api/households/{$household->id}/categories")
+            ->assertOk()
+            ->assertJsonPath('data.0.id', $visibleCategory->id)
+            ->assertJsonMissing(['name' => 'Other Household Category']);
+
+        $this->actingAs($user)
+            ->postJson("/api/households/{$household->id}/categories", [
+                'name' => 'Blocked',
+                'type' => 'expense',
+            ])
+            ->assertForbidden();
     }
 
     public function test_cross_household_access_is_blocked(): void
