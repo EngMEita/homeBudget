@@ -92,6 +92,7 @@
   "not_available": "n/a",
   "offline_sync": "Offline sync",
   "operation_attempts": "attempts {count}",
+  "operations": "Operations",
   "page_of": "Page {current} of {total}",
   "password": "Password",
   "password_confirmation": "Confirm password",

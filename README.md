@@ -94,7 +94,7 @@ Current verified result:
 
 ```text
 52 tests, 193 assertions
-npm run check:i18n passed with 163 synchronized locale keys
+npm run check:i18n passed with 164 synchronized locale keys
 npm run build passed and generated the PWA manifest/service worker
 npm run test:e2e passed on Chromium and mobile Chromium
 ```

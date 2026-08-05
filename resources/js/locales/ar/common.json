@@ -92,6 +92,7 @@
   "not_available": "غير متاح",
   "offline_sync": "المزامنة دون اتصال",
   "operation_attempts": "المحاولات {count}",
+  "operations": "العمليات",
   "page_of": "صفحة {current} من {total}",
   "password": "كلمة المرور",
   "password_confirmation": "تأكيد كلمة المرور",
