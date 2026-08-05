@@ -1,21 +1,21 @@
 <template>
   <section class="panel">
     <h2>{{ t('security_sessions') }}</h2>
-    <p class="lead">Manage active tokens and rotate or revoke a device session.</p>
+    <p class="lead">{{ t('security_sessions_hint') }}</p>
     <label class="field">
       <span>{{ t('current_device_label') }}</span>
-      <input v-model="auth.tokenLabel" type="text" maxlength="100" placeholder="Office laptop" />
+      <input v-model="auth.tokenLabel" type="text" maxlength="100" :placeholder="t('device_placeholder')" />
     </label>
     <div class="token-list">
       <div v-for="token in tokens" :key="token.id" class="token-row">
         <div>
           <strong>{{ token.name }}</strong>
-          <div class="token-meta">{{ token.last_used_at ?? 'never' }}</div>
+          <div class="token-meta">{{ token.last_used_at ?? t('never') }}</div>
         </div>
-        <button class="button button-secondary" type="button" @click="revokeToken(token.id)">Revoke</button>
+        <button class="button button-secondary" type="button" @click="revokeToken(token.id)">{{ t('revoke') }}</button>
       </div>
     </div>
-    <button class="button" type="button" @click="loadTokens">Refresh tokens</button>
+    <button class="button" type="button" @click="loadTokens">{{ t('refresh_tokens') }}</button>
     <button class="button" type="button" @click="rotateToken">{{ t('rotate_current_token') }}</button>
     <button class="button button-secondary" type="button" @click="revokeCurrent">{{ t('revoke_current_device') }}</button>
   </section>

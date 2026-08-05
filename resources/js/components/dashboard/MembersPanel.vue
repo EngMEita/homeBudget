@@ -1,24 +1,24 @@
 <template>
   <section class="panel">
-    <h2>Household members</h2>
+    <h2>{{ t('household_members') }}</h2>
     <div class="filters-grid">
       <label class="field">
-        <span>Email</span>
-        <input v-model="model.email" type="email" placeholder="spouse@example.com" />
+        <span>{{ t('email') }}</span>
+        <input v-model="model.email" type="email" :placeholder="t('email_placeholder')" />
       </label>
       <label class="field">
-        <span>Role</span>
+        <span>{{ t('role') }}</span>
         <select v-model="model.role">
-          <option value="administrator">Administrator</option>
-          <option value="contributor">Contributor</option>
-          <option value="viewer">Viewer</option>
-          <option value="restricted">Restricted</option>
+          <option value="administrator">{{ t('administrator') }}</option>
+          <option value="contributor">{{ t('contributor') }}</option>
+          <option value="viewer">{{ t('viewer') }}</option>
+          <option value="restricted">{{ t('restricted') }}</option>
         </select>
       </label>
     </div>
     <div class="actions-row">
-      <button class="button" type="button" @click="$emit('invite-member')">Send invitation</button>
-      <button class="button button-secondary" type="button" @click="$emit('refresh-members')">Refresh members</button>
+      <button class="button" type="button" @click="$emit('invite-member')">{{ t('send_invitation') }}</button>
+      <button class="button button-secondary" type="button" @click="$emit('refresh-members')">{{ t('refresh_members') }}</button>
     </div>
 
     <div class="history-list">
@@ -28,22 +28,22 @@
           <div class="token-meta">{{ member.email }}</div>
         </div>
         <div class="history-metrics">
-          <span>{{ member.role }}</span>
-          <span v-if="member.can_create_transactions">can create</span>
-          <span v-if="member.can_view_transactions">can view</span>
+          <span>{{ t(member.role) }}</span>
+          <span v-if="member.can_create_transactions">{{ t('can_create') }}</span>
+          <span v-if="member.can_view_transactions">{{ t('can_view') }}</span>
         </div>
       </article>
     </div>
 
     <div class="history-list" v-if="invitations.length">
-      <h3>Pending invitations</h3>
+      <h3>{{ t('pending_invitations') }}</h3>
       <article v-for="invitation in invitations" :key="invitation.id" class="history-row">
         <div>
           <strong>{{ invitation.email }}</strong>
-          <div class="token-meta">{{ invitation.role }}</div>
+          <div class="token-meta">{{ t(invitation.role) }}</div>
         </div>
         <div class="history-metrics">
-          <span>{{ invitation.accepted_at ? 'accepted' : 'pending' }}</span>
+          <span>{{ invitation.accepted_at ? t('accepted') : t('pending') }}</span>
           <span>{{ invitation.token }}</span>
         </div>
       </article>
@@ -53,8 +53,15 @@
 
 <script setup lang="ts">
 import type { Invitation, Member } from '../../types/dashboard'
+import { useLocaleStore } from '../../stores/locale'
+import { translate } from '../../i18n'
 
 defineProps<{ members: Member[]; invitations: Invitation[] }>()
 defineEmits<{ 'invite-member': []; 'refresh-members': [] }>()
 const model = defineModel<{ email: string; role: string }>({ required: true })
+const locale = useLocaleStore()
+
+function t(key: string) {
+  return translate(locale.locale, key)
+}
 </script>

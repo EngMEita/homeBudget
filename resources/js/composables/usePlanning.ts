@@ -1,9 +1,12 @@
 import { reactive, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useLocaleStore } from '../stores/locale'
+import { translate } from '../i18n'
 import type { Debt, Household, RecurringRule, SavingsGoal, UpcomingBill } from '../types/dashboard'
 
 export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?: () => Promise<void>) {
   const auth = useAuthStore()
+  const locale = useLocaleStore()
   const planning = reactive({
     recurringRules: [] as RecurringRule[],
     upcomingBills: [] as UpcomingBill[],
@@ -11,7 +14,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
     debts: [] as Debt[]
   })
   const planningForm = reactive({
-    name: 'Internet bill',
+    name: translate(locale.locale, 'internet_bill_placeholder'),
     account_id: '',
     currency_id: '',
     amount_minor: '',
@@ -111,7 +114,7 @@ export function usePlanning(activeHousehold: Ref<Household | null>, afterWrite?:
       body: JSON.stringify({
         currency_id: Number(planningForm.currency_id),
         name: planningForm.name,
-        counterparty_name: planningForm.counterparty_name || 'Counterparty',
+        counterparty_name: planningForm.counterparty_name || translate(locale.locale, 'counterparty_fallback'),
         principal_minor_amount: Number(planningForm.amount_minor),
         opened_on: planningForm.date
       })

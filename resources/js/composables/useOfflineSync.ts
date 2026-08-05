@@ -1,10 +1,13 @@
 import { reactive, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useLocaleStore } from '../stores/locale'
 import { useOfflineQueueStore } from '../stores/offlineQueue'
+import { translate } from '../i18n'
 import type { Household } from '../types/dashboard'
 
 export function useOfflineSync(activeHousehold: Ref<Household | null>) {
   const auth = useAuthStore()
+  const locale = useLocaleStore()
   const offlineQueue = useOfflineQueueStore()
   const offlineForm = reactive({
     account_id: '',
@@ -24,7 +27,7 @@ export function useOfflineSync(activeHousehold: Ref<Household | null>) {
         currency_id: Number(offlineForm.currency_id),
         type: 'expense',
         status: 'confirmed',
-        description: offlineForm.description || 'Offline expense',
+        description: offlineForm.description || translate(locale.locale, 'expense_offline_default'),
         amount_minor: Number(offlineForm.amount_minor),
         transaction_date: offlineForm.transaction_date,
         version: 1

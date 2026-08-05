@@ -1,12 +1,15 @@
 import { reactive, ref, type Ref } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useLocaleStore } from '../stores/locale'
+import { translate } from '../i18n'
 import type { BudgetSummary, Household } from '../types/dashboard'
 
 export function useBudgets(activeHousehold: Ref<Household | null>) {
   const auth = useAuthStore()
+  const locale = useLocaleStore()
   const budgetSummary = ref<BudgetSummary>({ budget: null, periods: [] })
   const budgetForm = reactive({
-    name: 'Monthly budget',
+    name: translate(locale.locale, 'monthly_budget_placeholder'),
     starts_on: new Date().toISOString().slice(0, 10),
     ends_on: new Date().toISOString().slice(0, 10),
     category_id: '',

@@ -1,10 +1,10 @@
 <template>
   <main class="shell">
     <section class="hero">
-      <p class="eyebrow">HomeBudget</p>
+      <p class="eyebrow">{{ t('app_brand') }}</p>
       <h1>{{ t('app_title') }}</h1>
       <p class="lead">{{ t('app_subtitle') }}</p>
-      <nav class="app-nav" aria-label="Primary">
+      <nav class="app-nav" :aria-label="t('primary_navigation')">
         <RouterLink to="/dashboard">{{ t('dashboard') }}</RouterLink>
         <RouterLink to="/transactions">{{ t('transaction_history') }}</RouterLink>
         <RouterLink to="/security">{{ t('security_sessions') }}</RouterLink>

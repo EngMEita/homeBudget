@@ -3,7 +3,7 @@
     <div class="history-header">
       <div>
         <h2>{{ t('transaction_history') }}</h2>
-        <p class="lead">Filter by date, type, currency, and export the current result set.</p>
+        <p class="lead">{{ t('filter_transactions_hint') }}</p>
       </div>
       <div class="actions-row">
         <label class="field compact">
@@ -30,17 +30,17 @@
       <label class="field">
         <span>{{ t('type') }}</span>
         <select v-model="filters.type">
-          <option value="">All types</option>
-          <option value="expense">Expense</option>
-          <option value="income">Income</option>
-          <option value="transfer">Transfer</option>
-          <option value="refund">Refund</option>
+          <option value="">{{ t('all_types') }}</option>
+          <option value="expense">{{ t('expense') }}</option>
+          <option value="income">{{ t('income') }}</option>
+          <option value="transfer">{{ t('transfer') }}</option>
+          <option value="refund">{{ t('refund') }}</option>
         </select>
       </label>
       <label class="field">
         <span>{{ t('currency') }}</span>
         <select v-model="filters.currency_id">
-          <option value="">All currencies</option>
+          <option value="">{{ t('all_currencies') }}</option>
           <option v-for="currency in currencies" :key="currency.id" :value="String(currency.id)">
             {{ currency.code }} - {{ currency.name }}
           </option>
@@ -58,11 +58,11 @@
     <h2>{{ t('active_household') }}</h2>
     <div class="stats-grid">
       <div class="stat-card">
-        <span class="stat-label">Household</span>
+        <span class="stat-label">{{ t('household') }}</span>
         <strong>{{ household.name }}</strong>
       </div>
       <div class="stat-card">
-        <span class="stat-label">Base currency</span>
+        <span class="stat-label">{{ t('base_currency') }}</span>
         <strong>{{ household.base_currency_code }}</strong>
       </div>
       <div class="stat-card">
@@ -81,25 +81,25 @@
             {{ transaction.transaction_date }} · {{ transaction.type }} · {{ transaction.status }}
           </div>
           <div class="token-meta" v-if="transaction.exchange_rate_source || transaction.exchange_rate_date">
-            {{ transaction.exchange_rate_source ?? 'manual' }} · {{ transaction.exchange_rate_date ?? 'n/a' }}
+            {{ transaction.exchange_rate_source ?? t('manual') }} · {{ transaction.exchange_rate_date ?? t('not_available') }}
           </div>
         </div>
         <div class="history-metrics">
-          <span>{{ transaction.amount_minor }} minor</span>
-          <span v-if="transaction.transfer_fee_minor">fee {{ transaction.transfer_fee_minor }} minor</span>
-          <span v-if="transaction.exchange_rate">rate {{ transaction.exchange_rate }}</span>
-          <span v-if="transaction.base_amount_minor">base {{ transaction.base_amount_minor }} minor</span>
+          <span>{{ t('minor_units', { amount: transaction.amount_minor }) }}</span>
+          <span v-if="transaction.transfer_fee_minor">{{ t('fee_minor', { amount: transaction.transfer_fee_minor }) }}</span>
+          <span v-if="transaction.exchange_rate">{{ t('rate_value', { value: transaction.exchange_rate }) }}</span>
+          <span v-if="transaction.base_amount_minor">{{ t('base_minor', { amount: transaction.base_amount_minor }) }}</span>
         </div>
       </article>
     </div>
 
     <div class="pagination-row" v-if="meta.last_page > 1">
       <button class="button button-secondary" type="button" :disabled="meta.current_page <= 1" @click="goToPage(meta.current_page - 1)">
-        Previous
+        {{ t('previous') }}
       </button>
-      <span class="token-meta">Page {{ meta.current_page }} of {{ meta.last_page }}</span>
+      <span class="token-meta">{{ t('page_of', { current: meta.current_page, total: meta.last_page }) }}</span>
       <button class="button button-secondary" type="button" :disabled="meta.current_page >= meta.last_page" @click="goToPage(meta.current_page + 1)">
-        Next
+        {{ t('next') }}
       </button>
     </div>
   </section>
@@ -175,8 +175,8 @@ const currencies = computed(() => {
   return [...map.values()]
 })
 
-function t(key: string) {
-  return translate(locale.locale, key)
+function t(key: string, params: Record<string, string | number> = {}) {
+  return translate(locale.locale, key, params)
 }
 
 function queryParams() {
