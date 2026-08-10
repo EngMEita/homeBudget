@@ -6,6 +6,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "check": "npm run check:i18n && vue-tsc --noEmit",
     "check:i18n": "node scripts/check-i18n.mjs",
     "test:e2e": "playwright test"
   },

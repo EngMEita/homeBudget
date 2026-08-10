@@ -139,6 +139,8 @@
   "role": "Role",
   "restricted": "Restricted",
   "rotate_current_token": "Rotate current token",
+  "restore_backup": "Restore backup",
+  "restore_backup_confirm": "Restore this backup? A safety backup will be created first.",
   "save_categorization": "Save categorization",
   "save_settings": "Save settings",
   "security_sessions": "Security and sessions",

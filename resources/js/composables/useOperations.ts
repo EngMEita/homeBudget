@@ -27,5 +27,16 @@ export function useOperations(activeHousehold: Ref<Household | null>) {
     await loadOperationsData()
   }
 
-  return { operations, loadOperationsData, createBackup }
+  async function restoreBackup(backupId: number) {
+    if (!activeHousehold.value) return false
+    const response = await fetch(`/api/households/${activeHousehold.value.id}/backups/restore`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
+      body: JSON.stringify({ backup_log_id: backupId })
+    })
+    if (response.ok) await loadOperationsData()
+    return response.ok
+  }
+
+  return { operations, loadOperationsData, createBackup, restoreBackup }
 }

@@ -60,6 +60,7 @@
       :backups="operations.backups"
       :audit-logs="operations.auditLogs"
       @create-backup="createBackup"
+      @restore-backup="restoreBackup"
       @refresh-operations="loadOperationsData"
     />
 
@@ -91,6 +92,10 @@ import { useOfflineSync } from '../composables/useOfflineSync'
 import { useOperations } from '../composables/useOperations'
 import { usePlanning } from '../composables/usePlanning'
 import { useReceipts } from '../composables/useReceipts'
+import { useLocaleStore } from '../stores/locale'
+import { translate } from '../i18n'
+
+const locale = useLocaleStore()
 
 const {
   householdsStore,
@@ -107,7 +112,7 @@ const {
   inviteMember
 } = useHouseholds()
 const { budgetSummary, budgetForm, loadBudgetSummary, createBudget } = useBudgets(activeHousehold)
-const { operations, loadOperationsData, createBackup } = useOperations(activeHousehold)
+const { operations, loadOperationsData, createBackup, restoreBackup: restoreBackupRequest } = useOperations(activeHousehold)
 const {
   planning,
   planningForm,
@@ -143,6 +148,11 @@ async function selectHousehold(id: number) {
   await refreshHouseholdPanels()
 }
 
+async function restoreBackup(backupId: number) {
+  if (!window.confirm(translate(locale.locale, 'restore_backup_confirm'))) return
+  if (await restoreBackupRequest(backupId)) window.location.reload()
+}
+
 onMounted(async () => {
   await loadOfflineQueue()
   await loadHouseholds()
@@ -153,7 +163,7 @@ onMounted(async () => {
   })
   if ('serviceWorker' in navigator && 'SyncManager' in window) {
     const registration = await navigator.serviceWorker.ready
-    await registration.sync.register('homebudget-sync')
+    await (registration as ServiceWorkerRegistration & { sync: { register(tag: string): Promise<void> } }).sync.register('homebudget-sync')
   }
 })
 </script>

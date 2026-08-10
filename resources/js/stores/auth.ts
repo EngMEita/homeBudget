@@ -6,7 +6,7 @@ export const useAuthStore = defineStore('auth', {
     tokenLabel: localStorage.getItem('homebudget_token_label') ?? 'Current device'
   }),
   actions: {
-    async login(email: string, password: string, deviceName = this.tokenLabel) {
+    async login(email: string, password: string, deviceName = 'Current device') {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -17,7 +17,7 @@ export const useAuthStore = defineStore('auth', {
       this.setToken(payload.token, deviceName)
       return true
     },
-    async register(name: string, email: string, password: string, passwordConfirmation: string, deviceName = this.tokenLabel) {
+    async register(name: string, email: string, password: string, passwordConfirmation: string, deviceName = 'Current device') {
       const response = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -40,7 +40,7 @@ export const useAuthStore = defineStore('auth', {
       }
       this.clearToken()
     },
-    setToken(token: string, label = this.tokenLabel) {
+    setToken(token: string, label = 'Current device') {
       this.token = token
       this.tokenLabel = label
       localStorage.setItem('homebudget_token', token)
@@ -55,7 +55,7 @@ export const useAuthStore = defineStore('auth', {
       localStorage.removeItem('homebudget_token')
       localStorage.removeItem('homebudget_token_label')
     },
-    authHeaders() {
+    authHeaders(): Record<string, string> {
       return this.token ? { Authorization: `Bearer ${this.token}` } : {}
     }
   }

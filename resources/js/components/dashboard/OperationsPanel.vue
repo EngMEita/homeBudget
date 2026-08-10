@@ -11,6 +11,7 @@
           <strong>{{ backup.status }}</strong>
           <div class="token-meta">{{ backup.path ?? t('pending') }} · {{ t('bytes_count', { count: backup.size_bytes }) }}</div>
         </div>
+        <button v-if="backup.status === 'completed'" class="button button-secondary" type="button" @click="$emit('restore-backup', backup.id)">{{ t('restore_backup') }}</button>
       </article>
       <article v-for="log in auditLogs" :key="`audit-${log.id}`" class="history-row">
         <div>
@@ -28,7 +29,7 @@ import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
 
 defineProps<{ backups: BackupLog[]; auditLogs: AuditLog[] }>()
-defineEmits<{ 'create-backup': []; 'refresh-operations': [] }>()
+defineEmits<{ 'create-backup': []; 'refresh-operations': []; 'restore-backup': [backupId: number] }>()
 const locale = useLocaleStore()
 
 function t(key: string, params: Record<string, string | number> = {}) {

@@ -139,6 +139,8 @@
   "role": "الدور",
   "restricted": "مقيّد",
   "rotate_current_token": "تدوير الرمز الحالي",
+  "restore_backup": "استعادة النسخة الاحتياطية",
+  "restore_backup_confirm": "هل تريد استعادة هذه النسخة؟ سيتم إنشاء نسخة احتياطية أمان أولاً.",
   "save_categorization": "حفظ التصنيف",
   "save_settings": "حفظ الإعدادات",
   "security_sessions": "الأمان والجلسات",
