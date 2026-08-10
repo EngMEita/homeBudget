@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\StoreSplitExpenseRequest;
+use App\Http\Requests\UpdatePaymentLegsRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Household;
 use App\Services\TransactionService;
@@ -30,5 +31,11 @@ class TransactionController extends Controller
             'type' => 'expense', 'created_by' => $request->user()->getKey(),
         ]));
         return new TransactionResource($transaction);
+    }
+
+    public function updatePaymentLegs(UpdatePaymentLegsRequest $request, Household $household, Transaction $transaction, TransactionService $service): TransactionResource
+    {
+        abort_unless($transaction->household_id === $household->id && $transaction->type === 'expense', 404);
+        return new TransactionResource($service->updatePaymentLegs($transaction, $request->validated()));
     }
 }
