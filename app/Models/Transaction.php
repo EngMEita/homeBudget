@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Transaction extends Model
 {
@@ -68,6 +69,11 @@ class Transaction extends Model
     public function counterpartAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'counterpart_account_id');
+    }
+
+    public function paymentLegs(): HasMany
+    {
+        return $this->hasMany(PaymentLeg::class);
     }
 
     public function scopeForHousehold(Builder $query, int $householdId): Builder

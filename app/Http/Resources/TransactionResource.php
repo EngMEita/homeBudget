@@ -28,6 +28,7 @@ class TransactionResource extends JsonResource
             'exchange_rate_date' => $this->exchange_rate_date?->format('Y-m-d'),
             'transaction_date' => $this->transaction_date?->toDateString(),
             'version' => $this->version,
+            'payment_legs' => PaymentLegResource::collection($this->whenLoaded('paymentLegs')),
         ];
     }
 }

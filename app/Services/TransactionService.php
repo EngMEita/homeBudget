@@ -7,6 +7,7 @@ use App\Models\Household;
 use App\Models\Transaction;
 use App\Services\LedgerRuleService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class TransactionService
 {
@@ -42,6 +43,36 @@ class TransactionService
                 'version' => $data['version'] ?? 1,
                 'metadata' => $data['metadata'] ?? [],
             ]);
+        });
+    }
+
+    public function createSplitExpense(Household $household, array $data): Transaction
+    {
+        return DB::transaction(function () use ($household, $data): Transaction {
+            $legs = collect($data['payment_legs']);
+            $accounts = Account::query()->where('household_id', $household->id)->whereIn('id', $legs->pluck('account_id'))->get()->keyBy('id');
+            if ($accounts->count() !== $legs->pluck('account_id')->unique()->count()) {
+                throw ValidationException::withMessages(['payment_legs' => 'All payment accounts must belong to the household.']);
+            }
+            if ($legs->sum(fn ($leg) => (int) $leg['amount_minor']) !== (int) $data['amount_minor']) {
+                throw ValidationException::withMessages(['payment_legs' => 'Payment legs must equal the expense total.']);
+            }
+            $currencyIds = $legs->map(fn ($leg) => $accounts[(int) $leg['account_id']]->currency_id)->unique();
+            if ($currencyIds->count() !== 1 || (int) $currencyIds->first() !== (int) $data['currency_id']) {
+                throw ValidationException::withMessages(['payment_legs' => 'All payment legs must use the expense currency.']);
+            }
+
+            $transaction = $this->create($household, $data + ['account_id' => $accounts->first()->id]);
+            foreach ($legs as $leg) {
+                $transaction->paymentLegs()->create([
+                    'household_id' => $household->id,
+                    'account_id' => $leg['account_id'],
+                    'currency_id' => $data['currency_id'],
+                    'amount_minor' => (int) $leg['amount_minor'],
+                    'base_amount_minor' => (int) ($leg['base_amount_minor'] ?? $leg['amount_minor']),
+                ]);
+            }
+            return $transaction->load('paymentLegs.account');
         });
     }
 
