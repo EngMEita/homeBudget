@@ -59,7 +59,7 @@ class TransactionService
                 throw ValidationException::withMessages(['payment_legs' => 'All payment accounts must belong to the household.']);
             }
             $currencyIds = $legs->map(fn ($leg) => $accounts[(int) $leg['account_id']]->currency_id)->unique();
-            $totalMatches = $currencyIds->count() === 1
+            $totalMatches = $currencyIds->count() === 1 && (int) $currencyIds->first() === (int) $data['currency_id']
                 ? $legs->sum(fn ($leg) => (int) $leg['amount_minor']) === (int) $data['amount_minor']
                 : $legs->sum(fn ($leg) => (int) ($leg['base_amount_minor'] ?? 0)) === (int) ($data['base_amount_minor'] ?? $data['amount_minor']);
             if (! $totalMatches) {
@@ -91,15 +91,31 @@ class TransactionService
                 throw ValidationException::withMessages(['version' => 'The transaction was changed by another user.']);
             }
             $legs = collect($data['payment_legs']);
-            if ($legs->sum(fn ($leg) => (int) $leg['amount_minor']) !== (int) $locked->amount_minor) {
+            $accounts = Account::query()->where('household_id', $locked->household_id)->whereIn('id', $legs->pluck('account_id'))->get()->keyBy('id');
+            if ($accounts->count() !== $legs->pluck('account_id')->unique()->count()) {
+                throw ValidationException::withMessages(['payment_legs' => 'Payment accounts must belong to the household.']);
+            }
+            $currencyIds = $legs->map(fn ($leg) => $accounts[(int) $leg['account_id']]->currency_id)->unique();
+            $totalMatches = $currencyIds->count() === 1 && (int) $currencyIds->first() === (int) $locked->currency_id
+                ? $legs->sum(fn ($leg) => (int) $leg['amount_minor']) === (int) $locked->amount_minor
+                : $legs->sum(fn ($leg) => (int) ($leg['base_amount_minor'] ?? 0)) === (int) $locked->base_amount_minor;
+            if (! $totalMatches) {
                 throw ValidationException::withMessages(['payment_legs' => 'Payment legs must equal the expense total.']);
             }
-            $accounts = Account::query()->where('household_id', $locked->household_id)->whereIn('id', $legs->pluck('account_id'))->get()->keyBy('id');
-            if ($accounts->count() !== $legs->pluck('account_id')->unique()->count() || $accounts->pluck('currency_id')->unique()->count() !== 1 || (int) $accounts->first()->currency_id !== (int) $locked->currency_id) {
-                throw ValidationException::withMessages(['payment_legs' => 'Payment accounts must belong to the household and use the transaction currency.']);
-            }
             $locked->paymentLegs()->delete();
-            foreach ($legs as $leg) $locked->paymentLegs()->create(['household_id' => $locked->household_id, 'account_id' => $leg['account_id'], 'currency_id' => $locked->currency_id, 'amount_minor' => $leg['amount_minor'], 'base_amount_minor' => $leg['amount_minor']]);
+            foreach ($legs as $leg) {
+                $account = $accounts[(int) $leg['account_id']];
+                $locked->paymentLegs()->create([
+                    'household_id' => $locked->household_id,
+                    'account_id' => $leg['account_id'],
+                    'currency_id' => $account->currency_id,
+                    'amount_minor' => (int) $leg['amount_minor'],
+                    'base_amount_minor' => (int) ($leg['base_amount_minor'] ?? $leg['amount_minor']),
+                    'exchange_rate' => $leg['exchange_rate'] ?? null,
+                    'exchange_rate_source' => $leg['exchange_rate_source'] ?? null,
+                    'exchange_rate_date' => $leg['exchange_rate_date'] ?? null,
+                ]);
+            }
             $locked->increment('version');
             return $locked->load('paymentLegs.account');
         });

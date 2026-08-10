@@ -9,6 +9,7 @@ use App\Http\Requests\UpdatePaymentLegsRequest;
 use App\Http\Requests\StorePartialRefundRequest;
 use App\Http\Resources\TransactionResource;
 use App\Models\Household;
+use App\Models\Transaction;
 use App\Services\TransactionService;
 use Illuminate\Support\Facades\Gate;
 

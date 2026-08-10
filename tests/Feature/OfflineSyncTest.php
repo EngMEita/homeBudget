@@ -8,6 +8,7 @@ use App\Models\AccountType;
 use App\Models\Currency;
 use App\Models\Household;
 use App\Models\HouseholdUser;
+use App\Models\PaymentLeg;
 use App\Models\Receipt;
 use App\Models\Category;
 use App\Models\ReceiptAttachment;
@@ -59,6 +60,50 @@ class OfflineSyncTest extends TestCase
             ->assertJsonPath('results.0.client_payload.amount_minor', 1500)
             ->assertJsonPath('results.0.server_payload.amount_minor', 1200)
             ->assertJsonPath('results.0.server_result.version', 1);
+    }
+
+    public function test_sync_applies_split_payment_legs_and_replay_is_idempotent(): void
+    {
+        [$user, $household, $sarAccount, $sar] = $this->seedContext();
+        $usd = Currency::factory()->create(['code' => 'USD']);
+        $type = AccountType::query()->where('household_id', $household->id)->firstOrFail();
+        $usdAccount = Account::create([
+            'household_id' => $household->id,
+            'account_type_id' => $type->id,
+            'currency_id' => $usd->id,
+            'name' => 'USD Card',
+            'opening_balance_minor' => 0,
+            'is_shared' => true,
+            'is_active' => true,
+        ]);
+        $clientUuid = (string) Str::uuid();
+        $payload = [
+            'operations' => [[
+                'client_uuid' => $clientUuid,
+                'operation_type' => 'transaction.create',
+                'payload' => [
+                    'account_id' => $sarAccount->id,
+                    'currency_id' => $sar->id,
+                    'type' => 'expense',
+                    'status' => 'confirmed',
+                    'description' => 'Offline split bill',
+                    'amount_minor' => 100000,
+                    'base_amount_minor' => 100000,
+                    'transaction_date' => '2026-08-10',
+                    'payment_legs' => [
+                        ['account_id' => $sarAccount->id, 'amount_minor' => 62500, 'base_amount_minor' => 62500],
+                        ['account_id' => $usdAccount->id, 'amount_minor' => 10000, 'base_amount_minor' => 37500, 'exchange_rate' => '3.75', 'exchange_rate_source' => 'manual', 'exchange_rate_date' => '2026-08-10'],
+                    ],
+                ],
+            ]],
+        ];
+
+        $this->actingAs($user)->postJson("/api/households/{$household->id}/sync", $payload)->assertOk()->assertJsonPath('results.0.status', 'applied');
+        $this->actingAs($user)->postJson("/api/households/{$household->id}/sync", $payload)->assertOk()->assertJsonPath('results.0.status', 'applied');
+
+        $this->assertSame(1, Transaction::query()->where('client_uuid', $clientUuid)->count());
+        $this->assertSame(2, PaymentLeg::query()->count());
+        $this->assertSame(100000, PaymentLeg::query()->sum('base_amount_minor'));
     }
 
     public function test_sync_applies_receipt_create(): void
