@@ -170,4 +170,13 @@
   "queue_attachment_offline": "إضافة المرفق للصف دون اتصال",
   "queue_offline_expense": "إضافة مصروف دون اتصال للصف",
   "queue_offline_receipt": "إضافة إيصال دون اتصال للصف"
+  ,"split_payment": "Ø¯ÙØ¹ Ù…Ù† Ù…ØµØ§Ø¯Ø± Ù…ØªØ¹Ø¯Ø¯Ø©"
+  ,"split_payment_hint": "Ø§Ø¯ÙØ¹ Ù…ØµØ±ÙˆÙØ§Ù‹ ÙˆØ§Ø­Ø¯Ø§Ù‹ Ù…Ù† Ø¹Ø¯Ø© Ø­Ø³Ø§Ø¨Ø§Øª"
+  ,"split_payment_description_placeholder": "Ù…Ø´ØªØ±ÙŠØ§Øª Ø£Ùˆ ÙØ§ØªÙˆØ±Ø©"
+  ,"payment_source": "Ù…ØµØ¯Ø± Ø§Ù„Ø¯ÙØ¹"
+  ,"add_payment_source": "Ø¥Ø¶Ø§ÙØ© Ù…ØµØ¯Ø±"
+  ,"remove": "Ø¥Ø²Ø§Ù„Ø©"
+  ,"save_expense": "Ø­ÙØ¸ Ø§Ù„Ù…ØµØ±ÙˆÙ"
+  ,"saving": "Ø¬Ø§Ø±ÙŠ Ø§Ù„Ø­ÙØ¸..."
+  ,"split_payment_failed": "ØªØ¹Ø°Ø± Ø­ÙØ¸ Ø§Ù„Ø¯ÙØ¹"
 }

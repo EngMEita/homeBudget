@@ -18,6 +18,8 @@
       @refresh-members="loadMembers"
     />
 
+    <SplitExpensePanel v-if="activeHousehold" :household-id="activeHousehold.id" :accounts="accounts" :currencies="currencies" @saved="loadAccounts" />
+
     <BudgetPanel
       v-if="activeHousehold"
       v-model="budgetForm"
@@ -86,12 +88,14 @@ import OfflineSyncPanel from '../components/dashboard/OfflineSyncPanel.vue'
 import OperationsPanel from '../components/dashboard/OperationsPanel.vue'
 import PlanningPanel from '../components/dashboard/PlanningPanel.vue'
 import ReceiptPanel from '../components/dashboard/ReceiptPanel.vue'
+import SplitExpensePanel from '../components/dashboard/SplitExpensePanel.vue'
 import { useBudgets } from '../composables/useBudgets'
 import { useHouseholds } from '../composables/useHouseholds'
 import { useOfflineSync } from '../composables/useOfflineSync'
 import { useOperations } from '../composables/useOperations'
 import { usePlanning } from '../composables/usePlanning'
 import { useReceipts } from '../composables/useReceipts'
+import { useAccounts } from '../composables/useAccounts'
 import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
 
@@ -112,6 +116,7 @@ const {
   inviteMember
 } = useHouseholds()
 const { budgetSummary, budgetForm, loadBudgetSummary, createBudget } = useBudgets(activeHousehold)
+const { accounts, currencies, loadAccounts } = useAccounts()
 const { operations, loadOperationsData, createBackup, restoreBackup: restoreBackupRequest } = useOperations(activeHousehold)
 const {
   planning,
@@ -138,6 +143,7 @@ const {
 const { offlineQueue, offlineForm, enqueueOfflineTransaction, syncOfflineQueue, retryConflict, loadOfflineQueue } = useOfflineSync(activeHousehold)
 
 async function refreshHouseholdPanels() {
+  await loadAccounts()
   await loadMembers()
   await loadPlanningData()
   await loadOperationsData()

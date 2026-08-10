@@ -169,5 +169,14 @@
   "viewer": "Viewer",
   "queue_attachment_offline": "Queue attachment offline",
   "queue_offline_expense": "Queue offline expense",
-  "queue_offline_receipt": "Queue offline receipt"
+  "queue_offline_receipt": "Queue offline receipt",
+  "split_payment": "Split payment",
+  "split_payment_hint": "Pay one expense from multiple accounts without double-counting it.",
+  "split_payment_description_placeholder": "Shopping or bill",
+  "payment_source": "Payment source",
+  "add_payment_source": "Add source",
+  "remove": "Remove",
+  "save_expense": "Save expense",
+  "saving": "Saving...",
+  "split_payment_failed": "The split expense could not be saved."
 }
