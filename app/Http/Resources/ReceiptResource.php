@@ -32,6 +32,7 @@ class ReceiptResource extends JsonResource
                 'notes' => $allocation->notes,
             ])->values()->all(), []),
             'attachments' => $this->whenLoaded('attachments', fn () => ReceiptAttachmentResource::collection($this->attachments)->resolve(), []),
+            'payment_legs' => $this->whenLoaded('transaction', fn () => PaymentLegResource::collection($this->transaction->load('paymentLegs.account')->paymentLegs)->resolve(), []),
         ];
     }
 }

@@ -88,6 +88,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('transactions', [TransactionController::class, 'store']);
         Route::post('transactions/split-expense', [TransactionController::class, 'storeSplitExpense']);
         Route::put('transactions/{transaction}/payment-legs', [TransactionController::class, 'updatePaymentLegs']);
+        Route::post('transactions/{transaction}/refunds', [TransactionController::class, 'storePartialRefund']);
         Route::get('transactions', TransactionIndexController::class);
         Route::get('transactions/export', [TransactionIndexController::class, 'export']);
         Route::post('transfers', [TransferController::class, 'store']);

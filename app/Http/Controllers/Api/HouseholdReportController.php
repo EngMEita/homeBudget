@@ -19,6 +19,7 @@ class HouseholdReportController extends Controller
                 ->latest('transaction_date')
                 ->latest('id')
                 ->limit(8)
+                ->with('paymentLegs.account')
                 ->get()
         );
 

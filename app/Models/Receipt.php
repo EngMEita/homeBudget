@@ -57,4 +57,9 @@ class Receipt extends Model
     {
         return $this->belongsTo(Household::class);
     }
+
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

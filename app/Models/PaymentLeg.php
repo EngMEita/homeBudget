@@ -11,7 +11,9 @@ class PaymentLeg extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['uuid', 'transaction_id', 'household_id', 'account_id', 'currency_id', 'amount_minor', 'base_amount_minor'];
+    protected $fillable = ['uuid', 'transaction_id', 'household_id', 'account_id', 'currency_id', 'amount_minor', 'base_amount_minor', 'exchange_rate', 'exchange_rate_source', 'exchange_rate_date'];
+
+    protected $casts = ['exchange_rate_date' => 'date'];
 
     protected static function booted(): void
     {

@@ -88,13 +88,16 @@ class SyncService
             return $this->markConflict($syncOperation, 'A transaction already exists for this client UUID.');
         }
 
-        $transaction = app(TransactionService::class)->create($household, array_merge(
+        $transactionData = array_merge(
             $operation['payload'],
             [
                 'client_uuid' => $operation['client_uuid'],
                 'created_by' => $userId,
             ]
-        ));
+        );
+        $transaction = ! empty($transactionData['payment_legs'])
+            ? app(TransactionService::class)->createSplitExpense($household, $transactionData)
+            : app(TransactionService::class)->create($household, $transactionData);
 
         $syncOperation->forceFill([
             'status' => 'applied',

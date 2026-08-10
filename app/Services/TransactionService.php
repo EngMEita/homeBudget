@@ -58,12 +58,12 @@ class TransactionService
             if ($accounts->count() !== $legs->pluck('account_id')->unique()->count()) {
                 throw ValidationException::withMessages(['payment_legs' => 'All payment accounts must belong to the household.']);
             }
-            if ($legs->sum(fn ($leg) => (int) $leg['amount_minor']) !== (int) $data['amount_minor']) {
-                throw ValidationException::withMessages(['payment_legs' => 'Payment legs must equal the expense total.']);
-            }
             $currencyIds = $legs->map(fn ($leg) => $accounts[(int) $leg['account_id']]->currency_id)->unique();
-            if ($currencyIds->count() !== 1 || (int) $currencyIds->first() !== (int) $data['currency_id']) {
-                throw ValidationException::withMessages(['payment_legs' => 'All payment legs must use the expense currency.']);
+            $totalMatches = $currencyIds->count() === 1
+                ? $legs->sum(fn ($leg) => (int) $leg['amount_minor']) === (int) $data['amount_minor']
+                : $legs->sum(fn ($leg) => (int) ($leg['base_amount_minor'] ?? 0)) === (int) ($data['base_amount_minor'] ?? $data['amount_minor']);
+            if (! $totalMatches) {
+                throw ValidationException::withMessages(['payment_legs' => 'Payment legs must equal the expense total.']);
             }
 
             $transaction = $this->create($household, $data + ['account_id' => $accounts->first()->id]);
@@ -71,9 +71,12 @@ class TransactionService
                 $transaction->paymentLegs()->create([
                     'household_id' => $household->id,
                     'account_id' => $leg['account_id'],
-                    'currency_id' => $data['currency_id'],
+                    'currency_id' => $accounts[(int) $leg['account_id']]->currency_id,
                     'amount_minor' => (int) $leg['amount_minor'],
                     'base_amount_minor' => (int) ($leg['base_amount_minor'] ?? $leg['amount_minor']),
+                    'exchange_rate' => $leg['exchange_rate'] ?? null,
+                    'exchange_rate_source' => $leg['exchange_rate_source'] ?? null,
+                    'exchange_rate_date' => $leg['exchange_rate_date'] ?? null,
                 ]);
             }
             return $transaction->load('paymentLegs.account');
@@ -99,6 +102,23 @@ class TransactionService
             foreach ($legs as $leg) $locked->paymentLegs()->create(['household_id' => $locked->household_id, 'account_id' => $leg['account_id'], 'currency_id' => $locked->currency_id, 'amount_minor' => $leg['amount_minor'], 'base_amount_minor' => $leg['amount_minor']]);
             $locked->increment('version');
             return $locked->load('paymentLegs.account');
+        });
+    }
+
+    public function createPartialRefund(Transaction $original, array $data): Transaction
+    {
+        return DB::transaction(function () use ($original, $data): Transaction {
+            $refunded = Transaction::query()->where('type', 'refund')->where('metadata->original_transaction_id', $original->id)->sum('amount_minor');
+            if ($refunded + (int) $data['amount_minor'] > (int) $original->amount_minor) {
+                throw ValidationException::withMessages(['amount_minor' => 'Refund cannot exceed the original expense amount.']);
+            }
+            $account = Account::query()->where('id', $data['account_id'])->where('household_id', $original->household_id)->firstOrFail();
+            return $this->create($original->household, [
+                'account_id' => $account->id, 'currency_id' => $original->currency_id, 'type' => 'refund', 'status' => 'confirmed',
+                'amount_minor' => (int) $data['amount_minor'], 'base_amount_minor' => (int) $data['amount_minor'],
+                'description' => $data['description'] ?? 'Partial refund', 'transaction_date' => $data['transaction_date'],
+                'created_by' => $data['created_by'], 'metadata' => ['original_transaction_id' => $original->id],
+            ]);
         });
     }
 

@@ -9,6 +9,8 @@ test('core shell supports login, dashboard navigation, Arabic RTL, and PWA metad
   await expect(page).toHaveURL(/\/dashboard/)
   await expect(page.getByRole('heading', { name: /Household budgeting foundation|منصة ميزانية الأسرة/ })).toBeVisible()
 
+  await expect(page.getByRole('heading', { name: /Split payment/ })).toBeVisible()
+  await expect(page.getByRole('button', { name: /Add source/ })).toBeVisible()
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href', '/build/manifest.webmanifest')
   const manifestResponse = await page.request.get('/build/manifest.webmanifest')
   expect(manifestResponse.ok()).toBeTruthy()
