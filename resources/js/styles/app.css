@@ -262,6 +262,87 @@ h3 {
   padding: clamp(20px, 3vw, 32px);
 }
 
+.workflow-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.workflow-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 54px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.58);
+  color: var(--ink);
+  font-weight: 900;
+  cursor: pointer;
+  text-align: start;
+}
+
+.workflow-tab span {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: rgba(23, 69, 59, 0.1);
+  color: var(--brand);
+}
+
+.workflow-tab.active {
+  border-color: rgba(23, 69, 59, 0.34);
+  background: var(--brand);
+  color: #fffaf0;
+}
+
+.workflow-tab.active span {
+  background: #fffaf0;
+}
+
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.status-pill {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  padding: 8px 12px;
+  background: rgba(169, 53, 43, 0.1);
+  color: var(--danger);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
+.status-pill.ready {
+  background: rgba(23, 69, 59, 0.1);
+  color: var(--brand);
+}
+
+.empty-state {
+  margin-top: 18px;
+  border: 1px dashed rgba(23, 69, 59, 0.24);
+  border-radius: 22px;
+  padding: 18px;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.empty-state p {
+  margin: 8px 0 0;
+  color: var(--muted);
+}
+
+.error-text {
+  color: var(--danger);
+}
+
 .history-header {
   display: flex;
   justify-content: space-between;
@@ -483,6 +564,7 @@ pre {
 @media (max-width: 640px) {
   .topbar,
   .history-header,
+  .panel-heading,
   .token-row,
   .history-row {
     display: grid;

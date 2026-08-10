@@ -1,9 +1,20 @@
 <template>
   <section class="panel">
-    <h2>{{ t('split_payment') }}</h2>
-    <p class="lead">{{ t('split_payment_hint') }}</p>
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">{{ t('workflow_pay') }}</p>
+        <h2>{{ t('split_payment') }}</h2>
+        <p class="lead">{{ t('split_payment_hint') }}</p>
+      </div>
+      <span class="status-pill" :class="{ ready: canSubmit }">{{ canSubmit ? t('ready') : t('needs_input') }}</span>
+    </div>
 
-    <div class="form-grid">
+    <div v-if="!hasAccounts" class="empty-state">
+      <strong>{{ t('no_payment_sources_ready') }}</strong>
+      <p>{{ t('create_account_first_hint') }}</p>
+    </div>
+
+    <div v-else class="form-grid">
       <label class="field">
         <span>{{ t('description') }}</span>
         <input v-model="description" :placeholder="t('split_payment_description_placeholder')" />
@@ -26,7 +37,7 @@
       </label>
     </div>
 
-    <div v-for="(leg, index) in legs" :key="index" class="form-grid split-leg">
+    <div v-for="(leg, index) in legs" v-show="hasAccounts" :key="index" class="form-grid split-leg">
       <label class="field">
         <span>{{ t('source_currency') }}</span>
         <select v-model="leg.currencyId" @change="leg.accountId = ''; normalizeLegRate(leg)">
@@ -62,8 +73,8 @@
     </div>
 
     <div class="actions-row">
-      <strong>{{ t('remaining_amount', { amount: `${minorToDecimal(remainingMinor)} ${selectedCurrencyCode}` }) }}</strong>
-      <button class="button button-secondary" type="button" @click="addLeg">{{ t('add_payment_source') }}</button>
+      <strong :class="{ 'error-text': remainingMinor !== 0 && totalMinor > 0 }">{{ statusMessage }}</strong>
+      <button class="button button-secondary" type="button" :disabled="!hasAccounts" @click="addLeg">{{ t('add_payment_source') }}</button>
       <button class="button" type="button" :disabled="!canSubmit || saving" @click="submit">{{ saving ? t('saving') : t('save_expense') }}</button>
     </div>
     <p v-if="error" class="error-message">{{ error }}</p>
@@ -93,15 +104,26 @@ const error = ref('')
 const legs = ref<LegForm[]>([newLeg(), newLeg()])
 
 const currencies = computed(() => props.currencies.filter((currency) => props.accounts.some((account) => account.currency_id === currency.id)))
+const hasAccounts = computed(() => props.accounts.some((account) => account.is_active))
 const selectedCurrencyCode = computed(() => currencyCode(currencyId.value))
 const totalMinor = computed(() => decimalToMinor(total.value || '0'))
 const paidBaseMinor = computed(() => legs.value.reduce((sum, leg) => sum + baseMinorForLeg(leg), 0))
 const remainingMinor = computed(() => totalMinor.value - paidBaseMinor.value)
 const canSubmit = computed(() => {
-  return totalMinor.value > 0
+  return hasAccounts.value
+    && totalMinor.value > 0
     && remainingMinor.value === 0
     && Boolean(currencyId.value)
     && legs.value.every((leg) => leg.accountId && decimalToMinor(leg.amount || '0') > 0 && validRate(leg))
+})
+const statusMessage = computed(() => {
+  if (!hasAccounts.value) return t('create_account_first_hint')
+  if (!currencyId.value) return t('select_currency_first')
+  if (totalMinor.value <= 0) return t('enter_total_first')
+  if (legs.value.some((leg) => !leg.accountId)) return t('select_all_payment_sources')
+  if (legs.value.some((leg) => decimalToMinor(leg.amount || '0') <= 0)) return t('enter_all_source_amounts')
+  if (legs.value.some((leg) => !validRate(leg))) return t('enter_exchange_rates')
+  return t('remaining_amount', { amount: `${minorToDecimal(remainingMinor.value)} ${selectedCurrencyCode.value}` })
 })
 
 watch(currencies, (available) => {

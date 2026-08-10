@@ -4,6 +4,8 @@
       v-if="activeHousehold"
       v-model="receiptForm"
       :active-receipt="activeReceipt"
+      :accounts="accounts"
+      :currencies="currencies"
       @create-receipt="createReceipt"
       @queue-offline-receipt="enqueueOfflineReceipt"
       @categorize-receipt="categorizeReceipt"
@@ -22,6 +24,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import ReceiptPanel from '../components/dashboard/ReceiptPanel.vue'
+import { useAccounts } from '../composables/useAccounts'
 import { useHouseholds } from '../composables/useHouseholds'
 import { useReceipts } from '../composables/useReceipts'
 import { translate } from '../i18n'
@@ -29,6 +32,7 @@ import { useLocaleStore } from '../stores/locale'
 
 const locale = useLocaleStore()
 const { activeHousehold, members, loadHouseholds, loadMembers } = useHouseholds()
+const { accounts, currencies, loadAccounts } = useAccounts()
 const {
   activeReceipt,
   receiptForm,
@@ -48,5 +52,6 @@ function t(key: string, params: Record<string, string | number> = {}) {
 onMounted(async () => {
   await loadHouseholds()
   await loadMembers()
+  await loadAccounts()
 })
 </script>

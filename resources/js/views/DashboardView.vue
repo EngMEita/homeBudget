@@ -9,8 +9,22 @@
       @select-household="selectHousehold"
     />
 
+    <section v-if="activeHousehold" class="workflow-strip" :aria-label="t('dashboard_workflow')">
+      <button
+        v-for="tab in workflowTabs"
+        :key="tab.id"
+        class="workflow-tab"
+        :class="{ active: activeTab === tab.id }"
+        type="button"
+        @click="activeTab = tab.id"
+      >
+        <span>{{ tab.step }}</span>
+        {{ tab.label }}
+      </button>
+    </section>
+
     <MembersPanel
-      v-if="activeHousehold"
+      v-if="activeHousehold && activeTab === 'setup'"
       v-model="invitation"
       :members="members"
       :invitations="invitations"
@@ -18,20 +32,20 @@
       @refresh-members="loadMembers"
     />
 
-    <SplitExpensePanel v-if="activeHousehold" :household-id="activeHousehold.id" :accounts="accounts" :currencies="currencies" @saved="loadAccounts" />
-
-    <BudgetPanel
-      v-if="activeHousehold"
-      v-model="budgetForm"
-      :summary="budgetSummary"
-      @create-budget="createBudget"
-      @refresh-budget="loadBudgetSummary"
+    <SplitExpensePanel
+      v-if="activeHousehold && activeTab === 'pay'"
+      :household-id="activeHousehold.id"
+      :accounts="accounts"
+      :currencies="currencies"
+      @saved="handleSplitPaymentSaved"
     />
 
     <ReceiptPanel
-      v-if="activeHousehold"
+      v-if="activeHousehold && activeTab === 'receipts'"
       v-model="receiptForm"
       :active-receipt="activeReceipt"
+      :accounts="accounts"
+      :currencies="currencies"
       @create-receipt="createReceipt"
       @queue-offline-receipt="enqueueOfflineReceipt"
       @categorize-receipt="categorizeReceipt"
@@ -41,8 +55,16 @@
       @complete-receipt="completeReceipt"
     />
 
+    <BudgetPanel
+      v-if="activeHousehold && activeTab === 'planning'"
+      v-model="budgetForm"
+      :summary="budgetSummary"
+      @create-budget="createBudget"
+      @refresh-budget="loadBudgetSummary"
+    />
+
     <PlanningPanel
-      v-if="activeHousehold"
+      v-if="activeHousehold && activeTab === 'planning'"
       v-model="planningForm"
       :recurring-rules="planning.recurringRules"
       :upcoming-bills="planning.upcomingBills"
@@ -58,7 +80,7 @@
     />
 
     <OperationsPanel
-      v-if="activeHousehold"
+      v-if="activeHousehold && activeTab === 'operations'"
       :backups="operations.backups"
       :audit-logs="operations.auditLogs"
       @create-backup="createBackup"
@@ -67,7 +89,7 @@
     />
 
     <OfflineSyncPanel
-      v-if="activeHousehold"
+      v-if="activeHousehold && activeTab === 'sync'"
       v-model="offlineForm"
       :operations="offlineQueue.operations"
       :conflicts="offlineQueue.conflicts"
@@ -80,7 +102,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import BudgetPanel from '../components/dashboard/BudgetPanel.vue'
 import HouseholdPanel from '../components/dashboard/HouseholdPanel.vue'
 import MembersPanel from '../components/dashboard/MembersPanel.vue'
@@ -100,6 +122,20 @@ import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
 
 const locale = useLocaleStore()
+const activeTab = ref<'setup' | 'pay' | 'receipts' | 'planning' | 'operations' | 'sync'>('pay')
+
+function t(key: string) {
+  return translate(locale.locale, key)
+}
+
+const workflowTabs = computed(() => [
+  { id: 'setup', step: '1', label: t('workflow_setup') },
+  { id: 'pay', step: '2', label: t('workflow_pay') },
+  { id: 'receipts', step: '3', label: t('workflow_receipts') },
+  { id: 'planning', step: '4', label: t('workflow_planning') },
+  { id: 'operations', step: '5', label: t('workflow_operations') },
+  { id: 'sync', step: '6', label: t('workflow_sync') }
+] as const)
 
 const {
   householdsStore,
@@ -151,7 +187,13 @@ async function refreshHouseholdPanels() {
 
 async function selectHousehold(id: number) {
   await selectHouseholdBase(id)
+  activeTab.value = 'pay'
   await refreshHouseholdPanels()
+}
+
+async function handleSplitPaymentSaved() {
+  await loadAccounts()
+  activeTab.value = 'receipts'
 }
 
 async function restoreBackup(backupId: number) {
