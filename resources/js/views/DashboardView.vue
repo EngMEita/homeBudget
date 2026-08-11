@@ -46,6 +46,7 @@
       :active-receipt="activeReceipt"
       :accounts="accounts"
       :currencies="currencies"
+      :categories="categories"
       @create-receipt="createReceipt"
       @queue-offline-receipt="enqueueOfflineReceipt"
       @categorize-receipt="categorizeReceipt"
@@ -59,6 +60,7 @@
       v-if="activeHousehold && activeTab === 'planning'"
       v-model="budgetForm"
       :summary="budgetSummary"
+      :categories="categories"
       @create-budget="createBudget"
       @refresh-budget="loadBudgetSummary"
     />
@@ -70,6 +72,8 @@
       :upcoming-bills="planning.upcomingBills"
       :savings-goals="planning.savingsGoals"
       :debts="planning.debts"
+      :accounts="accounts"
+      :currencies="currencies"
       @create-recurring-rule="createRecurringRule"
       @create-upcoming-bill="createUpcomingBill"
       @create-savings-goal="createSavingsGoal"
@@ -93,6 +97,8 @@
       v-model="offlineForm"
       :operations="offlineQueue.operations"
       :conflicts="offlineQueue.conflicts"
+      :accounts="accounts"
+      :currencies="currencies"
       @queue-transaction="enqueueOfflineTransaction"
       @sync-queue="syncOfflineQueue"
       @discard-conflict="offlineQueue.discard"
@@ -120,6 +126,7 @@ import { useReceipts } from '../composables/useReceipts'
 import { useAccounts } from '../composables/useAccounts'
 import { useLocaleStore } from '../stores/locale'
 import { translate } from '../i18n'
+import { useCategories } from '../composables/useCategories'
 
 const locale = useLocaleStore()
 const activeTab = ref<'setup' | 'pay' | 'receipts' | 'planning' | 'operations' | 'sync'>('pay')
@@ -153,6 +160,7 @@ const {
 } = useHouseholds()
 const { budgetSummary, budgetForm, loadBudgetSummary, createBudget } = useBudgets(activeHousehold)
 const { accounts, currencies, loadAccounts } = useAccounts()
+const { categories, loadCategories } = useCategories()
 const { operations, loadOperationsData, createBackup, restoreBackup: restoreBackupRequest } = useOperations(activeHousehold)
 const {
   planning,
@@ -181,6 +189,7 @@ const { offlineQueue, offlineForm, enqueueOfflineTransaction, syncOfflineQueue, 
 async function refreshHouseholdPanels() {
   await loadAccounts()
   await loadMembers()
+  await loadCategories()
   await loadPlanningData()
   await loadOperationsData()
 }

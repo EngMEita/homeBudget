@@ -34,7 +34,15 @@
       </label>
       <label class="field"><span>{{ t('total') }}</span><input v-model="model.total_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
       <label class="field"><span>{{ t('date') }}</span><input v-model="model.transaction_date" type="date" /></label>
-      <label class="field"><span>{{ t('category_id') }}</span><input v-model="model.category_id" type="number" min="1" /></label>
+      <label class="field">
+        <span>{{ t('category') }}</span>
+        <select v-model="model.category_id">
+          <option value="">{{ t('not_available') }}</option>
+          <option v-for="category in expenseCategories" :key="category.id" :value="String(category.id)">
+            {{ category.name }}
+          </option>
+        </select>
+      </label>
       <label class="field"><span>{{ t('allocation') }}</span><input v-model="model.allocation_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
     </div>
     <div class="actions-row">
@@ -72,11 +80,12 @@
 import { computed } from 'vue'
 import type { Receipt } from '../../types/dashboard'
 import type { Account, CurrencyOption } from '../../composables/useAccounts'
+import type { Category } from '../../composables/useCategories'
 import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
 import { minorToDecimal } from '../../money'
 
-const props = defineProps<{ activeReceipt: Receipt | null; accounts: Account[]; currencies: CurrencyOption[] }>()
+const props = defineProps<{ activeReceipt: Receipt | null; accounts: Account[]; currencies: CurrencyOption[]; categories: Category[] }>()
 defineEmits<{
   'create-receipt': []
   'queue-offline-receipt': []
@@ -89,6 +98,7 @@ defineEmits<{
 const model = defineModel<{ account_id: string; currency_id: string; total_minor_amount: string; transaction_date: string; category_id: string; allocation_minor_amount: string }>({ required: true })
 const locale = useLocaleStore()
 const activeAccounts = computed(() => props.accounts.filter((account) => account.is_active))
+const expenseCategories = computed(() => props.categories.filter((category) => category.is_active && category.type === 'expense'))
 const hasAccounts = computed(() => activeAccounts.value.length > 0)
 const canStartReceipt = computed(() => Boolean(model.value.account_id && model.value.currency_id && Number(model.value.total_minor_amount) > 0))
 const receiptStatus = computed(() => {

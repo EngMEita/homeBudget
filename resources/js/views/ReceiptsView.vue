@@ -6,6 +6,7 @@
       :active-receipt="activeReceipt"
       :accounts="accounts"
       :currencies="currencies"
+      :categories="categories"
       @create-receipt="createReceipt"
       @queue-offline-receipt="enqueueOfflineReceipt"
       @categorize-receipt="categorizeReceipt"
@@ -25,6 +26,7 @@
 import { onMounted } from 'vue'
 import ReceiptPanel from '../components/dashboard/ReceiptPanel.vue'
 import { useAccounts } from '../composables/useAccounts'
+import { useCategories } from '../composables/useCategories'
 import { useHouseholds } from '../composables/useHouseholds'
 import { useReceipts } from '../composables/useReceipts'
 import { translate } from '../i18n'
@@ -33,6 +35,7 @@ import { useLocaleStore } from '../stores/locale'
 const locale = useLocaleStore()
 const { activeHousehold, members, loadHouseholds, loadMembers } = useHouseholds()
 const { accounts, currencies, loadAccounts } = useAccounts()
+const { categories, loadCategories } = useCategories()
 const {
   activeReceipt,
   receiptForm,
@@ -53,5 +56,6 @@ onMounted(async () => {
   await loadHouseholds()
   await loadMembers()
   await loadAccounts()
+  await loadCategories()
 })
 </script>

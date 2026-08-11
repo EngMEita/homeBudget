@@ -202,5 +202,12 @@
   "receipt_start_hint": "Start with the paid account, total, and date. Details and attachments come after the receipt exists.",
   "receipt_continue_hint": "Add categorization and attachments, then complete the receipt when the remaining amount reaches zero.",
   "receipt_ready_to_create": "Ready to create the receipt.",
-  "receipt_ready_for_details": "Receipt is ready for categorization and attachments."
+  "receipt_ready_for_details": "Receipt is ready for categorization and attachments.",
+  "planning_flow_hint": "Use one form for recurring commitments, bills, savings goals, and debts; the selected account sets the currency when relevant.",
+  "planning_ready_with_account": "Ready to create an account-linked planning item.",
+  "planning_ready_without_account": "Ready for goals, debts, or bills that do not require an account.",
+  "offline_sync_hint": "Queue a transaction while offline, then sync it when the connection is back.",
+  "offline_ready_to_queue": "Ready to add this transaction to the offline queue.",
+  "select_category": "Select category",
+  "parent_category": "Parent category"
 }

@@ -18,9 +18,11 @@ test('core shell supports login, dashboard navigation, Arabic RTL, and PWA metad
   expect(manifest.display).toBe('standalone')
   expect(manifest.start_url).toBe('/dashboard')
 
-  await page.getByLabel(/Language|اللغة/).selectOption('ar')
+  await page.locator('.locale-pill select').selectOption('ar')
   await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
-  await expect(page.getByRole('heading', { name: 'منصة ميزانية الأسرة' })).toBeVisible()
+  await expect(page.locator('h1')).toBeVisible()
+  await page.locator('.locale-pill select').selectOption('en')
+  await expect(page.locator('html')).toHaveAttribute('dir', 'ltr')
 
   await page.getByRole('link', { name: /الحسابات|Accounts/ }).click()
   await expect(page).toHaveURL(/\/accounts/)

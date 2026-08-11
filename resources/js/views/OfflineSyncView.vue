@@ -5,6 +5,8 @@
       v-model="offlineForm"
       :operations="offlineQueue.operations"
       :conflicts="offlineQueue.conflicts"
+      :accounts="accounts"
+      :currencies="currencies"
       @queue-transaction="enqueueOfflineTransaction"
       @sync-queue="syncOfflineQueue"
       @discard-conflict="offlineQueue.discard"
@@ -20,6 +22,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import OfflineSyncPanel from '../components/dashboard/OfflineSyncPanel.vue'
+import { useAccounts } from '../composables/useAccounts'
 import { useHouseholds } from '../composables/useHouseholds'
 import { useOfflineSync } from '../composables/useOfflineSync'
 import { translate } from '../i18n'
@@ -27,6 +30,7 @@ import { useLocaleStore } from '../stores/locale'
 
 const locale = useLocaleStore()
 const { activeHousehold, loadHouseholds } = useHouseholds()
+const { accounts, currencies, loadAccounts } = useAccounts()
 const { offlineQueue, offlineForm, enqueueOfflineTransaction, syncOfflineQueue, retryConflict, loadOfflineQueue } = useOfflineSync(activeHousehold)
 
 function t(key: string, params: Record<string, string | number> = {}) {
@@ -36,5 +40,6 @@ function t(key: string, params: Record<string, string | number> = {}) {
 onMounted(async () => {
   await loadOfflineQueue()
   await loadHouseholds()
+  await loadAccounts()
 })
 </script>

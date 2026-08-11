@@ -47,7 +47,7 @@
           <div class="token-meta">{{ category.type }}</div>
         </div>
         <div class="history-metrics">
-          <span v-if="category.parent_id">{{ t('category_id') }}: {{ category.parent_id }}</span>
+          <span v-if="category.parent_id">{{ t('parent_category') }}: {{ parentCategoryName(category.parent_id) }}</span>
           <span v-if="category.is_active">{{ t('active') }}</span>
         </div>
       </article>
@@ -69,6 +69,10 @@ const { categories, form, loadCategories, createCategory } = useCategories()
 
 function t(key: string, params: Record<string, string | number> = {}) {
   return translate(locale.locale, key, params)
+}
+
+function parentCategoryName(id: number) {
+  return categories.value.find((category) => category.id === id)?.name ?? String(id)
 }
 
 onMounted(loadCategories)

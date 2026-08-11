@@ -5,7 +5,15 @@
       <label class="field"><span>{{ t('budget_name') }}</span><input v-model="model.name" type="text" :placeholder="t('monthly_budget_placeholder')" /></label>
       <label class="field"><span>{{ t('start') }}</span><input v-model="model.starts_on" type="date" /></label>
       <label class="field"><span>{{ t('end') }}</span><input v-model="model.ends_on" type="date" /></label>
-      <label class="field"><span>{{ t('category') }}</span><input v-model="model.category_id" type="number" min="1" /></label>
+      <label class="field">
+        <span>{{ t('category') }}</span>
+        <select v-model="model.category_id">
+          <option value="">{{ t('select_category') }}</option>
+          <option v-for="category in expenseCategories" :key="category.id" :value="String(category.id)">
+            {{ category.name }}
+          </option>
+        </select>
+      </label>
       <label class="field"><span>{{ t('planned_amount') }}</span><input v-model="model.planned_minor_amount" type="number" min="0.01" step="0.01" placeholder="1500.25" /></label>
     </div>
     <div class="actions-row">
@@ -35,15 +43,18 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import type { BudgetSummary } from '../../types/dashboard'
+import type { Category } from '../../composables/useCategories'
 import { useLocaleStore } from '../../stores/locale'
 import { translate } from '../../i18n'
 import { minorToDecimal } from '../../money'
 
-defineProps<{ summary: BudgetSummary }>()
+const props = defineProps<{ summary: BudgetSummary; categories: Category[] }>()
 defineEmits<{ 'create-budget': []; 'refresh-budget': [] }>()
 const model = defineModel<{ name: string; starts_on: string; ends_on: string; category_id: string; planned_minor_amount: string }>({ required: true })
 const locale = useLocaleStore()
+const expenseCategories = computed(() => props.categories.filter((category) => category.is_active && category.type === 'expense'))
 
 function t(key: string) {
   return translate(locale.locale, key)
