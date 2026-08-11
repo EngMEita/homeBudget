@@ -41,7 +41,9 @@ class BackupService
             Storage::disk('local')->put($path, File::get($source));
         }
 
-        $health = $this->healthCheck();
+        $health = $this->healthCheck() + [
+            'sha256' => hash_file('sha256', $absoluteTarget),
+        ];
         $log->forceFill([
             'path' => $path,
             'size_bytes' => Storage::disk('local')->size($path),
@@ -71,9 +73,21 @@ class BackupService
         abort_unless(File::exists($source), 404);
 
         $sourceHealth = $this->healthCheckPath($source);
+        if ($backup->health_check['sha256'] ?? null) {
+            $sourceHash = hash_file('sha256', $source);
+            if (! hash_equals((string) $backup->health_check['sha256'], $sourceHash)) {
+                $sourceHealth = array_merge($sourceHealth, [
+                    'ok' => false,
+                    'checksum_expected' => $backup->health_check['sha256'],
+                    'checksum_actual' => $sourceHash,
+                ]);
+            }
+        }
         if (! $sourceHealth['ok']) {
             return $this->recordFailedRestore($household, $userId, $backup, [
-                'reason' => 'Selected backup failed validation before restore.',
+                'reason' => isset($sourceHealth['checksum_expected'])
+                    ? 'Selected backup checksum does not match the recorded backup manifest.'
+                    : 'Selected backup failed validation before restore.',
                 'source_health_check' => $sourceHealth,
             ]);
         }

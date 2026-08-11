@@ -209,5 +209,12 @@
   "offline_sync_hint": "Queue a transaction while offline, then sync it when the connection is back.",
   "offline_ready_to_queue": "Ready to add this transaction to the offline queue.",
   "select_category": "Select category",
-  "parent_category": "Parent category"
+  "parent_category": "Parent category",
+  "operations_reliability_hint": "Review backups, audit events, and system health before risky operations.",
+  "database_integrity": "Database integrity",
+  "sqlite_foreign_keys": "Foreign keys",
+  "sqlite_write_mode": "SQLite write mode",
+  "storage_writable": "Storage writable",
+  "latest_backup": "Latest backup",
+  "offline_sync_backlog": "Offline sync backlog"
 }

@@ -87,6 +87,7 @@
       v-if="activeHousehold && activeTab === 'operations'"
       :backups="operations.backups"
       :audit-logs="operations.auditLogs"
+      :health="operations.health"
       @create-backup="createBackup"
       @restore-backup="restoreBackup"
       @refresh-operations="loadOperationsData"

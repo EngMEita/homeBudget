@@ -22,6 +22,7 @@ use App\Http\Controllers\Api\ReceiptUpdateController;
 use App\Http\Controllers\Api\RecurringRuleController;
 use App\Http\Controllers\Api\SavingsGoalController;
 use App\Http\Controllers\Api\SyncController;
+use App\Http\Controllers\Api\SystemHealthController;
 use App\Http\Controllers\Api\TransferController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Api\TransactionIndexController;
@@ -60,6 +61,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('notifications', [NotificationController::class, 'index']);
         Route::post('notifications/{notificationId}/read', [NotificationController::class, 'markRead']);
         Route::get('audit-logs', AuditLogController::class);
+        Route::get('health', SystemHealthController::class);
         Route::get('backups', [BackupController::class, 'index']);
         Route::post('backups', [BackupController::class, 'store']);
         Route::post('backups/restore', [BackupController::class, 'restore']);

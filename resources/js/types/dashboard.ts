@@ -63,3 +63,5 @@ export type SavingsGoal = { id: number; name: string; target_minor_amount: numbe
 export type Debt = { id: number; name: string; counterparty_name: string; remaining_minor_amount: number; status: string }
 export type BackupLog = { id: number; status: string; path: string | null; size_bytes: number }
 export type AuditLog = { id: number; event: string; created_at: string }
+export type HealthCheck = { name: string; status: string; message: string; meta: Record<string, unknown> }
+export type SystemHealth = { status: string; checked_at: string; checks: HealthCheck[] }
