@@ -122,7 +122,7 @@ a {
   display: flex;
   align-items: center;
   gap: 10px;
-  min-height: 42px;
+  min-height: 54px;
   border: 0;
   border-radius: 16px;
   padding: 10px 12px;
@@ -132,6 +132,19 @@ a {
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease;
+}
+
+.nav-link strong,
+.nav-link small {
+  display: block;
+}
+
+.nav-link small {
+  margin-top: 2px;
+  color: currentColor;
+  font-size: 0.76rem;
+  font-weight: 700;
+  opacity: 0.68;
 }
 
 .nav-link:hover,
@@ -148,12 +161,23 @@ a {
   transform: translateX(-2px);
 }
 
-.nav-dot {
-  width: 8px;
-  height: 8px;
+.nav-icon {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  background: var(--brand-2);
-  box-shadow: 0 0 0 5px rgba(216, 157, 50, 0.12);
+  background: rgba(216, 157, 50, 0.16);
+  color: var(--brand);
+  font-weight: 950;
+  box-shadow: 0 0 0 5px rgba(216, 157, 50, 0.08);
+}
+
+.nav-link.router-link-active .nav-icon,
+.nav-link:hover .nav-icon {
+  background: #fffaf0;
+  color: var(--brand);
 }
 
 .logout-button {
@@ -270,10 +294,11 @@ h3 {
 }
 
 .workflow-tab {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   align-items: center;
   gap: 10px;
-  min-height: 54px;
+  min-height: 72px;
   border: 1px solid var(--line);
   border-radius: 18px;
   padding: 10px 12px;
@@ -294,6 +319,25 @@ h3 {
   color: var(--brand);
 }
 
+.workflow-tab strong,
+.workflow-tab small {
+  min-width: 0;
+}
+
+.workflow-tab strong {
+  display: block;
+}
+
+.workflow-tab small {
+  display: block;
+  grid-column: 2;
+  color: currentColor;
+  font-size: 0.78rem;
+  font-weight: 750;
+  line-height: 1.35;
+  opacity: 0.7;
+}
+
 .workflow-tab.active {
   border-color: rgba(23, 69, 59, 0.34);
   background: var(--brand);
@@ -302,6 +346,35 @@ h3 {
 
 .workflow-tab.active span {
   background: #fffaf0;
+}
+
+.coach-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 14px;
+  border: 1px solid rgba(216, 157, 50, 0.32);
+  border-radius: 22px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(255, 250, 240, 0.9), rgba(232, 216, 183, 0.36));
+}
+
+.coach-banner > span {
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--brand);
+  color: #fffaf0;
+  font-weight: 950;
+}
+
+.coach-banner p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
 }
 
 .panel-heading {
@@ -337,6 +410,46 @@ h3 {
 .empty-state p {
   margin: 8px 0 0;
   color: var(--muted);
+}
+
+.helper-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.helper-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 8px 10px;
+  align-items: start;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.54);
+}
+
+.helper-card span {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(23, 69, 59, 0.1);
+  color: var(--brand);
+  font-weight: 950;
+}
+
+.helper-card strong {
+  align-self: center;
+}
+
+.helper-card p {
+  grid-column: 2;
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
 }
 
 .error-text {
@@ -406,7 +519,7 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 44px;
+  min-height: 48px;
   margin: 0;
   border: 0;
   border-radius: 999px;

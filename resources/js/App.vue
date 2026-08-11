@@ -13,8 +13,11 @@
         <section v-for="group in navGroups" :key="group.label" class="nav-group">
           <p class="nav-label">{{ group.label }}</p>
           <RouterLink v-for="item in group.items" :key="item.to" :to="item.to" class="nav-link">
-            <span class="nav-dot"></span>
-            {{ item.label }}
+            <span class="nav-icon" aria-hidden="true">{{ item.icon }}</span>
+            <span>
+              <strong>{{ item.label }}</strong>
+              <small>{{ item.hint }}</small>
+            </span>
           </RouterLink>
         </section>
       </nav>
@@ -97,7 +100,14 @@ const navGroups = computed(() => [
       { to: '/security', label: t('security_sessions') }
     ]
   }
-])
+].map((group) => ({
+  ...group,
+  items: group.items.map((item) => ({
+    ...item,
+    icon: navIcon(item.to),
+    hint: navHint(item.to)
+  }))
+})))
 
 const currentSection = computed(() => {
   const flatItems = navGroups.value.flatMap((group) => group.items)
@@ -107,5 +117,35 @@ const currentSection = computed(() => {
 async function logout() {
   await auth.logout()
   await router.push('/login')
+}
+
+function navIcon(path: string) {
+  return ({
+    '/dashboard': '⌂',
+    '/reports': '▦',
+    '/notifications': '!',
+    '/accounts': '$',
+    '/categories': '#',
+    '/receipts': '□',
+    '/transactions': '↕',
+    '/offline-sync': '↻',
+    '/settings': '⚙',
+    '/security': '✓'
+  } as Record<string, string>)[path] ?? '•'
+}
+
+function navHint(path: string) {
+  return ({
+    '/dashboard': t('nav_dashboard_hint'),
+    '/reports': t('nav_reports_hint'),
+    '/notifications': t('nav_notifications_hint'),
+    '/accounts': t('nav_accounts_hint'),
+    '/categories': t('nav_categories_hint'),
+    '/receipts': t('nav_receipts_hint'),
+    '/transactions': t('nav_transactions_hint'),
+    '/offline-sync': t('nav_sync_hint'),
+    '/settings': t('nav_settings_hint'),
+    '/security': t('nav_security_hint')
+  } as Record<string, string>)[path] ?? ''
 }
 </script>

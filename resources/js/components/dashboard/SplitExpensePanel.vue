@@ -14,7 +14,25 @@
       <p>{{ t('create_account_first_hint') }}</p>
     </div>
 
-    <div v-else class="form-grid">
+    <div v-else class="helper-grid">
+      <article class="helper-card">
+        <span aria-hidden="true">$</span>
+        <strong>{{ t('coach_total_title') }}</strong>
+        <p>{{ t('coach_total_text') }}</p>
+      </article>
+      <article class="helper-card">
+        <span aria-hidden="true">↔</span>
+        <strong>{{ t('coach_sources_title') }}</strong>
+        <p>{{ t('coach_sources_text') }}</p>
+      </article>
+      <article class="helper-card">
+        <span aria-hidden="true">✓</span>
+        <strong>{{ t('coach_ready_title') }}</strong>
+        <p>{{ t('coach_ready_text') }}</p>
+      </article>
+    </div>
+
+    <div v-if="hasAccounts" class="form-grid">
       <label class="field">
         <span>{{ t('description') }}</span>
         <input v-model="description" :placeholder="t('split_payment_description_placeholder')" />

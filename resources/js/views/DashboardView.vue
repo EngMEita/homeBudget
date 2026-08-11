@@ -18,9 +18,18 @@
         type="button"
         @click="activeTab = tab.id"
       >
-        <span>{{ tab.step }}</span>
-        {{ tab.label }}
+        <span aria-hidden="true">{{ tab.icon }}</span>
+        <strong>{{ tab.label }}</strong>
+        <small>{{ tab.hint }}</small>
       </button>
+    </section>
+
+    <section v-if="activeHousehold" class="coach-banner">
+      <span aria-hidden="true">{{ activeWorkflow?.icon }}</span>
+      <div>
+        <strong>{{ activeWorkflow?.label }}</strong>
+        <p>{{ activeWorkflow?.coach }}</p>
+      </div>
     </section>
 
     <MembersPanel
@@ -137,13 +146,14 @@ function t(key: string) {
 }
 
 const workflowTabs = computed(() => [
-  { id: 'setup', step: '1', label: t('workflow_setup') },
-  { id: 'pay', step: '2', label: t('workflow_pay') },
-  { id: 'receipts', step: '3', label: t('workflow_receipts') },
-  { id: 'planning', step: '4', label: t('workflow_planning') },
-  { id: 'operations', step: '5', label: t('workflow_operations') },
-  { id: 'sync', step: '6', label: t('workflow_sync') }
+  { id: 'setup', icon: '1', label: t('workflow_setup'), hint: t('workflow_setup_hint'), coach: t('coach_setup_step') },
+  { id: 'pay', icon: '2', label: t('workflow_pay'), hint: t('workflow_pay_hint'), coach: t('coach_pay_step') },
+  { id: 'receipts', icon: '3', label: t('workflow_receipts'), hint: t('workflow_receipts_hint'), coach: t('coach_receipts_step') },
+  { id: 'planning', icon: '4', label: t('workflow_planning'), hint: t('workflow_planning_hint'), coach: t('coach_planning_step') },
+  { id: 'operations', icon: '5', label: t('workflow_operations'), hint: t('workflow_operations_hint'), coach: t('coach_operations_step') },
+  { id: 'sync', icon: '6', label: t('workflow_sync'), hint: t('workflow_sync_hint'), coach: t('coach_sync_step') }
 ] as const)
+const activeWorkflow = computed(() => workflowTabs.value.find((tab) => tab.id === activeTab.value))
 
 const {
   householdsStore,
