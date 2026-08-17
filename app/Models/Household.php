@@ -63,6 +63,11 @@ class Household extends Model
         return $this->hasMany(Transaction::class);
     }
 
+    public function receipts(): HasMany
+    {
+        return $this->hasMany(Receipt::class);
+    }
+
     public function invitations(): HasMany
     {
         return $this->hasMany(HouseholdInvitation::class);

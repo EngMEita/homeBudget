@@ -92,6 +92,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::put('accounts/{account}', AccountUpdateController::class);
         Route::delete('accounts/{account}', AccountDeleteController::class);
         Route::post('transactions', [TransactionController::class, 'store']);
+        Route::get('transactions/{transaction}', [TransactionController::class, 'show']);
         Route::post('transactions/split-expense', [TransactionController::class, 'storeSplitExpense']);
         Route::put('transactions/{transaction}/payment-legs', [TransactionController::class, 'updatePaymentLegs']);
         Route::post('transactions/{transaction}/refunds', [TransactionController::class, 'storePartialRefund']);
@@ -100,9 +101,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('transfers', [TransferController::class, 'store']);
         Route::put('transactions/{transaction}', TransactionUpdateController::class);
         Route::delete('transactions/{transaction}', TransactionDeleteController::class);
+        Route::get('receipts', [ReceiptController::class, 'index']);
         Route::post('receipts', [ReceiptController::class, 'store']);
+        Route::get('receipts/{receipt}', [ReceiptController::class, 'show']);
         Route::post('receipts/{receipt}/attachments', [ReceiptAttachmentController::class, 'store']);
         Route::put('receipts/{receipt}', ReceiptUpdateController::class);
+        Route::delete('receipts/{receipt}', [ReceiptController::class, 'destroy']);
         Route::post('receipts/{receipt}/complete', ReceiptCompleteController::class);
         Route::post('sync', [SyncController::class, 'store']);
     });

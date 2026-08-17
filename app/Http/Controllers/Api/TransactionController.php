@@ -15,6 +15,14 @@ use Illuminate\Support\Facades\Gate;
 
 class TransactionController extends Controller
 {
+    public function show(Household $household, Transaction $transaction): TransactionResource
+    {
+        Gate::authorize('viewTransactions', $household);
+        abort_unless($transaction->household_id === $household->id, 404);
+
+        return new TransactionResource($transaction->load(['paymentLegs', 'account', 'currency']));
+    }
+
     public function store(StoreTransactionRequest $request, Household $household, TransactionService $service): TransactionResource
     {
         Gate::authorize('createTransaction', $household);
