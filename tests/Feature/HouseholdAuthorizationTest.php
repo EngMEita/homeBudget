@@ -89,6 +89,32 @@ class HouseholdAuthorizationTest extends TestCase
             ->assertJsonStructure(['account_types', 'currencies']);
     }
 
+    public function test_account_show_update_and_delete_are_household_scoped(): void
+    {
+        [$user, $household, $currency, $accountType] = $this->seedHouseholdUser(HouseholdRole::Owner);
+        $account = Account::factory()->create(['household_id' => $household->id, 'currency_id' => $currency->id, 'account_type_id' => $accountType->id]);
+
+        $this->actingAs($user)
+            ->getJson("/api/households/{$household->id}/accounts/{$account->id}")
+            ->assertOk()
+            ->assertJsonPath('data.id', $account->id);
+
+        $this->actingAs($user)
+            ->putJson("/api/households/{$household->id}/accounts/{$account->id}", [
+                'account_type_id' => $accountType->id, 'currency_id' => $currency->id,
+                'name' => 'Updated account', 'opening_balance_minor' => 0,
+                'is_shared' => true, 'is_active' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Updated account');
+
+        $this->actingAs($user)
+            ->deleteJson("/api/households/{$household->id}/accounts/{$account->id}")
+            ->assertOk();
+
+        $this->assertSoftDeleted('accounts', ['id' => $account->id]);
+    }
+
     public function test_category_index_is_household_scoped_and_viewer_cannot_create(): void
     {
         [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Viewer);

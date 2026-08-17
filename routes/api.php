@@ -86,6 +86,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::delete('categories/{category}', [CategoryController::class, 'destroy']);
         Route::get('accounts', [AccountController::class, 'index']);
         Route::post('accounts', [AccountController::class, 'store']);
+        Route::get('accounts/{account}', [AccountController::class, 'show']);
         Route::get('accounts/{account}/reconciliations', [AccountReconciliationController::class, 'index']);
         Route::post('account-reconciliations', [AccountReconciliationController::class, 'store']);
         Route::put('accounts/{account}', AccountUpdateController::class);

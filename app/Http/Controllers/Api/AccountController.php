@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAccountRequest;
 use App\Http\Resources\AccountResource;
 use App\Models\AccountType;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Household;
 use App\Services\AccountService;
@@ -14,6 +15,14 @@ use Illuminate\Support\Facades\Gate;
 
 class AccountController extends Controller
 {
+    public function show(Household $household, Account $account): AccountResource
+    {
+        Gate::authorize('view', $household);
+        abort_unless($account->household_id === $household->id, 404);
+
+        return new AccountResource($account->load(['accountType:id,name', 'currency:id,code,name_en,name_ar']));
+    }
+
     public function index(Household $household): JsonResponse
     {
         Gate::authorize('view', $household);
