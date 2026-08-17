@@ -43,12 +43,17 @@
     <div class="history-list" v-if="categories.length">
       <article v-for="category in categories" :key="category.id" class="history-row">
         <div>
-          <strong>{{ category.name }}</strong>
+          <input v-if="editingId === category.id" v-model="category.name" class="inline-input" type="text" />
+          <strong v-else>{{ category.name }}</strong>
           <div class="token-meta">{{ category.type }}</div>
         </div>
         <div class="history-metrics">
           <span v-if="category.parent_id">{{ t('parent_category') }}: {{ parentCategoryName(category.parent_id) }}</span>
           <span v-if="category.is_active">{{ t('active') }}</span>
+          <button v-if="editingId !== category.id" class="button button-secondary" type="button" @click="editingId = category.id">{{ t('edit') }}</button>
+          <button v-if="editingId === category.id" class="button" type="button" @click="saveCategory(category); editingId = null">{{ t('save') }}</button>
+          <button v-if="editingId === category.id" class="button button-secondary" type="button" @click="loadCategories(); editingId = null">{{ t('cancel') }}</button>
+          <button class="button button-danger" type="button" @click="removeCategory(category.id)">{{ t('delete') }}</button>
         </div>
       </article>
     </div>
@@ -57,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useCategories } from '../composables/useCategories'
 import { translate } from '../i18n'
 import { useHouseholdStore } from '../stores/household'
@@ -65,7 +70,8 @@ import { useLocaleStore } from '../stores/locale'
 
 const householdsStore = useHouseholdStore()
 const locale = useLocaleStore()
-const { categories, form, loadCategories, createCategory } = useCategories()
+const { categories, form, loadCategories, createCategory, saveCategory, deleteCategory } = useCategories()
+const editingId = ref<number | null>(null)
 
 function t(key: string, params: Record<string, string | number> = {}) {
   return translate(locale.locale, key, params)
@@ -73,6 +79,12 @@ function t(key: string, params: Record<string, string | number> = {}) {
 
 function parentCategoryName(id: number) {
   return categories.value.find((category) => category.id === id)?.name ?? String(id)
+}
+
+async function removeCategory(id: number) {
+  if (!window.confirm(t('confirm_delete'))) return
+  const category = categories.value.find((item) => item.id === id)
+  if (category) await deleteCategory(category)
 }
 
 onMounted(loadCategories)

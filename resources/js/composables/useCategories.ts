@@ -48,5 +48,20 @@ export function useCategories() {
     await loadCategories()
   }
 
-  return { categories, form, loadCategories, createCategory }
+  async function saveCategory(category: Category) {
+    if (!auth.token || !householdId.value || !category.name.trim()) return
+    const response = await fetch(`/api/households/${householdId.value}/categories/${category.id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
+      body: JSON.stringify({ parent_id: category.parent_id, name: category.name, type: category.type, is_active: category.is_active })
+    })
+    if (response.ok) await loadCategories()
+  }
+
+  async function deleteCategory(category: Category) {
+    if (!auth.token || !householdId.value) return
+    const response = await fetch(`/api/households/${householdId.value}/categories/${category.id}`, { method: 'DELETE', headers: auth.authHeaders() })
+    if (response.ok) await loadCategories()
+  }
+
+  return { categories, form, loadCategories, createCategory, saveCategory, deleteCategory }
 }

@@ -112,6 +112,41 @@ class HouseholdAuthorizationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_owner_can_update_and_soft_delete_category(): void
+    {
+        [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Owner);
+        $category = Category::factory()->create(['household_id' => $household->id, 'name' => 'Old name']);
+
+        $this->actingAs($user)
+            ->putJson("/api/households/{$household->id}/categories/{$category->id}", [
+                'name' => 'Updated name', 'type' => 'expense', 'is_active' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.name', 'Updated name');
+
+        $this->actingAs($user)
+            ->deleteJson("/api/households/{$household->id}/categories/{$category->id}")
+            ->assertNoContent();
+
+        $this->assertSoftDeleted('categories', ['id' => $category->id]);
+    }
+
+    public function test_viewer_cannot_update_or_delete_category(): void
+    {
+        [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Viewer);
+        $category = Category::factory()->create(['household_id' => $household->id]);
+
+        $this->actingAs($user)
+            ->putJson("/api/households/{$household->id}/categories/{$category->id}", [
+                'name' => 'Blocked', 'type' => 'expense',
+            ])
+            ->assertForbidden();
+
+        $this->actingAs($user)
+            ->deleteJson("/api/households/{$household->id}/categories/{$category->id}")
+            ->assertForbidden();
+    }
+
     public function test_cross_household_access_is_blocked(): void
     {
         [$user, $household] = $this->seedHouseholdUser(HouseholdRole::Owner);

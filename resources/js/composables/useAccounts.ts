@@ -67,5 +67,20 @@ export function useAccounts() {
     await loadAccounts()
   }
 
-  return { accounts, accountTypes, currencies, form, loadAccounts, createAccount }
+  async function updateAccount(account: Account) {
+    if (!auth.token || !householdId.value) return
+    const response = await fetch(`/api/households/${householdId.value}/accounts/${account.id}`, {
+      method: 'PUT', headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
+      body: JSON.stringify({ account_type_id: account.account_type_id, currency_id: account.currency_id, name: account.name, opening_balance_minor: account.opening_balance_minor, is_shared: account.is_shared, is_active: account.is_active })
+    })
+    if (response.ok) await loadAccounts()
+  }
+
+  async function deleteAccount(account: Account) {
+    if (!auth.token || !householdId.value) return
+    const response = await fetch(`/api/households/${householdId.value}/accounts/${account.id}`, { method: 'DELETE', headers: auth.authHeaders() })
+    if (response.ok) await loadAccounts()
+  }
+
+  return { accounts, accountTypes, currencies, form, loadAccounts, createAccount, updateAccount, deleteAccount }
 }

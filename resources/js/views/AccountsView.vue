@@ -44,13 +44,16 @@
     <div class="history-list" v-if="accounts.length">
       <article v-for="account in accounts" :key="account.id" class="history-row">
         <div>
-          <RouterLink :to="`/accounts/${account.id}`"><strong>{{ account.name }}</strong></RouterLink>
+          <input v-if="editingId === account.id" v-model="account.name" class="inline-input" type="text" />
+          <RouterLink v-else :to="`/accounts/${account.id}`"><strong>{{ account.name }}</strong></RouterLink>
           <div class="token-meta">{{ account.account_type_name }} · {{ account.currency_code }}</div>
         </div>
         <div class="history-metrics">
           <span>{{ t('opening_balance') }}: {{ minorToDecimal(account.opening_balance_minor) }}</span>
           <span v-if="account.is_shared">{{ t('shared') }}</span>
           <span v-if="account.is_active">{{ t('active') }}</span>
+          <button class="button button-secondary" type="button" @click="editAccount(account.id)">{{ editingId === account.id ? t('save') : t('edit') }}</button>
+          <button class="button button-danger" type="button" @click="removeAccount(account.id)">{{ t('delete') }}</button>
         </div>
       </article>
     </div>
@@ -59,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useAccounts } from '../composables/useAccounts'
 import { translate } from '../i18n'
@@ -69,10 +72,23 @@ import { useLocaleStore } from '../stores/locale'
 
 const householdsStore = useHouseholdStore()
 const locale = useLocaleStore()
-const { accounts, accountTypes, currencies, form, loadAccounts, createAccount } = useAccounts()
+const { accounts, accountTypes, currencies, form, loadAccounts, createAccount, updateAccount, deleteAccount } = useAccounts()
+const editingId = ref<number | null>(null)
 
 function t(key: string, params: Record<string, string | number> = {}) {
   return translate(locale.locale, key, params)
+}
+
+async function editAccount(id: number) {
+  const account = accounts.value.find((item) => item.id === id)
+  if (!account) return
+  if (editingId.value === id) { await updateAccount(account); editingId.value = null } else editingId.value = id
+}
+
+async function removeAccount(id: number) {
+  if (!window.confirm(t('confirm_delete'))) return
+  const account = accounts.value.find((item) => item.id === id)
+  if (account) await deleteAccount(account)
 }
 
 onMounted(loadAccounts)
