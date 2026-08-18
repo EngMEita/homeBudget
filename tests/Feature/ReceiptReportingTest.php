@@ -154,6 +154,39 @@ class ReceiptReportingTest extends TestCase
         Storage::disk('local')->assertExists($path);
     }
 
+    public function test_receipt_index_show_update_and_delete_are_authorized(): void
+    {
+        [$user, $household, $account, $currency] = $this->seedHouseholdAccount();
+        $receipt = app(ReceiptService::class)->create([
+            'household_id' => $household->id, 'account_id' => $account->id, 'currency_id' => $currency->id,
+            'paid_by_user_id' => $user->id, 'total_minor_amount' => 900, 'base_currency_minor_amount' => 900,
+            'transaction_date' => now()->toDateString(), 'created_by' => $user->id,
+        ]);
+
+        $this->actingAs($user)->getJson("/api/households/{$household->id}/receipts")
+            ->assertOk()->assertJsonPath('data.0.id', $receipt->id);
+        $this->actingAs($user)->getJson("/api/households/{$household->id}/receipts/{$receipt->id}")
+            ->assertOk()->assertJsonPath('data.id', $receipt->id);
+        $this->actingAs($user)->putJson("/api/households/{$household->id}/receipts/{$receipt->id}", [
+            'account_id' => $account->id, 'currency_id' => $currency->id, 'paid_by_user_id' => $user->id,
+            'total_minor_amount' => 900, 'base_currency_minor_amount' => 900,
+            'transaction_date' => now()->toDateString(), 'notes' => 'Updated receipt',
+        ])->assertOk();
+        $this->actingAs($user)->deleteJson("/api/households/{$household->id}/receipts/{$receipt->id}")
+            ->assertNoContent();
+        $this->assertSoftDeleted('receipts', ['id' => $receipt->id]);
+    }
+
+    public function test_viewer_cannot_modify_or_delete_receipt(): void
+    {
+        [$owner, $household, $account, $currency] = $this->seedHouseholdAccount();
+        $receipt = Receipt::factory()->create(['household_id' => $household->id, 'account_id' => $account->id, 'currency_id' => $currency->id]);
+        $viewer = User::factory()->create();
+        HouseholdUser::create(['household_id' => $household->id, 'user_id' => $viewer->id, 'role' => HouseholdRole::Viewer->value, 'can_view_balances' => true, 'can_create_transactions' => false, 'can_view_transactions' => true]);
+
+        $this->actingAs($viewer)->deleteJson("/api/households/{$household->id}/receipts/{$receipt->id}")->assertForbidden();
+    }
+
     private function seedHouseholdAccount(): array
     {
         $user = User::factory()->create();

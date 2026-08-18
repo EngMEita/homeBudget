@@ -119,6 +119,7 @@
   "receipt_attachment": "Receipt attachment",
   "receipt_number": "Receipt #{id}",
   "receipts": "Receipts",
+  "receipt_history": "Receipt history",
   "recurring_bills_goals_debts": "Recurring, bills, goals, and debts",
   "recurring_rules": "Recurring rules",
   "refresh": "Refresh",

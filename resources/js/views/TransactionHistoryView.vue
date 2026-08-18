@@ -83,12 +83,15 @@
           <div class="token-meta" v-if="transaction.exchange_rate_source || transaction.exchange_rate_date">
             {{ transaction.exchange_rate_source ?? t('manual') }} · {{ transaction.exchange_rate_date ?? t('not_available') }}
           </div>
+          <input v-if="editingId === transaction.id" v-model="transaction.description" class="inline-input" type="text" />
         </div>
         <div class="history-metrics">
           <span>{{ minorToDecimal(transaction.amount_minor) }}</span>
           <span v-if="transaction.transfer_fee_minor">{{ t('fee_minor', { amount: minorToDecimal(transaction.transfer_fee_minor) }) }}</span>
           <span v-if="transaction.exchange_rate">{{ t('rate_value', { value: transaction.exchange_rate }) }}</span>
           <span v-if="transaction.base_amount_minor">{{ t('base_minor', { amount: minorToDecimal(transaction.base_amount_minor) }) }}</span>
+          <button class="button button-secondary" type="button" @click="editTransaction(transaction)">{{ editingId === transaction.id ? t('save') : t('edit') }}</button>
+          <button class="button button-danger" type="button" @click="deleteTransaction(transaction.id)">{{ t('delete') }}</button>
         </div>
       </article>
     </div>
@@ -129,6 +132,9 @@ type Household = {
 
 type Transaction = {
   id: number
+  account_id: number
+  currency_id: number
+  category_id: number | null
   description: string | null
   type: string
   status: string
@@ -139,6 +145,7 @@ type Transaction = {
   exchange_rate_source: string | null
   exchange_rate_date: string | null
   transaction_date: string | null
+  version: number
 }
 
 type Meta = {
@@ -153,6 +160,7 @@ const householdsStore = useHouseholdStore()
 const locale = useLocaleStore()
 const household = ref<Household | null>(null)
 const transactions = ref<Transaction[]>([])
+const editingId = ref<number | null>(null)
 const meta = ref<Meta>({ current_page: 1, last_page: 1, per_page: 10, total: 0 })
 const filters = reactive({
   date_from: '',
@@ -265,6 +273,22 @@ async function downloadCsv() {
   link.download = `household-${household.value.id}-transactions.csv`
   link.click()
   URL.revokeObjectURL(url)
+}
+
+async function editTransaction(transaction: Transaction) {
+  if (!household.value) return
+  if (editingId.value !== transaction.id) { editingId.value = transaction.id; return }
+  const response = await fetch(`/api/households/${household.value.id}/transactions/${transaction.id}`, {
+    method: 'PUT', headers: { 'Content-Type': 'application/json', ...auth.authHeaders() },
+    body: JSON.stringify({ account_id: transaction.account_id, currency_id: transaction.currency_id, category_id: transaction.category_id, type: transaction.type, description: transaction.description, amount_minor: transaction.amount_minor, base_amount_minor: transaction.base_amount_minor ?? transaction.amount_minor, transaction_date: transaction.transaction_date, version: transaction.version })
+  })
+  if (response.ok) { editingId.value = null; await loadTransactions() }
+}
+
+async function deleteTransaction(id: number) {
+  if (!household.value || !window.confirm(t('confirm_delete'))) return
+  const response = await fetch(`/api/households/${household.value.id}/transactions/${id}`, { method: 'DELETE', headers: auth.authHeaders() })
+  if (response.ok) await loadTransactions()
 }
 
 onMounted(refresh)
